@@ -1,0 +1,22 @@
+selain->palvelin: GET https://studies.cs.helsinki.fi/exampleapp/spa
+palvelin-->selain: HTML-koodi
+selain->palvelin: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+palvelin-->selain: spa.js
+
+note over selain:
+selain alkaa suorittamaan js-koodia, joka pyytää palvelimelta JSON-dataa
+end note
+
+selain->palvelin: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+palvelin-->selain: [{content: "", date: "2021-09-15T07:05:20.110Z"}, ...]
+
+note over selain:
+selain suorittaa tapahtumankäsittelijän joka renderöi sivustolle JSON-datan.
+end note
+
+selain->palvelin: GET https://studies.cs.helsinki.fi/favicon.ico
+palvelin-->selain: favicon.ico
+
+note over selain:
+lopuksi selain pyytää favicon.ico html-koodia, jonka palvelin lähettää selaimelle. tämä sisältää "course stats" nappulan.
+end note
