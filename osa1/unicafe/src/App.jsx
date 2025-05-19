@@ -4,9 +4,10 @@ const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
 const StatisticLine = (props) => {
   return (
-    <div>
-      <p>{props.text} {props.value}</p>
-    </div>
+  <tr>
+    <td>{props.text}</td> 
+    <td>{props.value}</td>
+  </tr>
   )
 }
 
@@ -20,20 +21,22 @@ const Statistics = (props) => {
 
   if (all != 0) {
     return (
-      <div>
-        <StatisticLine text="Good" value={good} />
-        <StatisticLine text="Neutral" value={neutral} />
-        <StatisticLine text="Bad" value={bad} />
-        <StatisticLine text="All" value={all} />
-        <StatisticLine text="Average" value={average} />
-        <StatisticLine text="Positive" value={positive} />
-      </div>
+      <table>
+        <tbody>
+            <StatisticLine text="Good" value={good} />
+            <StatisticLine text="Neutral" value={neutral} />
+            <StatisticLine text="Bad" value={bad} />
+            <StatisticLine text="All" value={all} />
+            <StatisticLine text="Average" value={average} />
+            <StatisticLine text="Positive" value={positive} />
+        </tbody>
+      </table>
     )
   } else {
     return (
-      <div>
+      <>
         <p>No feedback given</p>
-      </div>
+      </>
     )
   }
 }
@@ -54,14 +57,14 @@ const App = () => {
   }
 
   return (
-    <div>
+    <>
       <h1>Give feedback</h1>
       <Button onClick={handleClickGood} text='Good' />
       <Button onClick={handleClickNeutral} text='Neutral' />
       <Button onClick={handleClickBad} text='Bad' />
-      <h1>Statistics</h1>
+      <h1>Statistics</h1>  
       <Statistics stats={[good, neutral, bad]} />
-    </div>
+    </>
   )
 }
 
