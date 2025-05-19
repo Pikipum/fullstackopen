@@ -8,6 +8,29 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 }
 
+function indexOfMax(arr) {
+    let maxIndex = 0;
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] > arr[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+    return maxIndex;
+}
+
+const NumberOfVotes = (props) => {
+  return(
+    <p>Has {props.votes[props.selected]} votes</p>
+  )
+}
+
+const MostVoted = (props) => {
+  const index = indexOfMax(props.votes)
+  return (
+    <p>{props.anecdotes[index]}</p>
+  )
+}
+
 const App = () => {
   
   const [selected, setSelected] = useState(0)
@@ -19,13 +42,16 @@ const App = () => {
   const handleClickVote = () => {
     votes[selected] += 1
   }
-  
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
-      <p>Has {votes[selected]} votes</p>
+      <NumberOfVotes votes={votes} selected={selected}/>
       <Button onClick={handleClickNext} text='Next anecdote' />
       <Button onClick={handleClickVote} text='Vote' />
+      <h1>Anecdote with the most votes</h1>
+      <MostVoted votes={votes} anecdotes={anecdotes} />
     </div>
   )
 }
