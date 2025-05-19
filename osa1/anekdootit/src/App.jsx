@@ -5,11 +5,32 @@ const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 function getRandomIntInclusive(min, max) {
   const minCeiled = Math.ceil(min);
   const maxFloored = Math.floor(max);
-  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
+  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 }
 
 const App = () => {
-  const anecdotes = [
+  
+  const [selected, setSelected] = useState(0)
+
+  const handleClickNext = () => {
+    setSelected(getRandomIntInclusive(0,anecdotes.length))
+  }
+
+  const handleClickVote = () => {
+    votes[selected] += 1
+  }
+  
+  return (
+    <div>
+      <p>{anecdotes[selected]}</p>
+      <p>Has {votes[selected]} votes</p>
+      <Button onClick={handleClickNext} text='Next anecdote' />
+      <Button onClick={handleClickVote} text='Vote' />
+    </div>
+  )
+}
+
+const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
     'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
@@ -19,19 +40,7 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.',
     'The only way to go fast, is to go well.'
   ]
-   
-  const [selected, setSelected] = useState(0)
 
-  const handleClick = () => {
-    setSelected(getRandomIntInclusive(0,anecdotes.length))
-  }
-
-  return (
-    <div>
-      <p>{anecdotes[selected]}</p>
-      <Button onClick={handleClick} text='Next anecdote' />
-    </div>
-  )
-}
+const votes = Array(anecdotes.length).fill(0)
 
 export default App
