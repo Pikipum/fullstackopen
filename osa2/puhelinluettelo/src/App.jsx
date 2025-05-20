@@ -18,12 +18,17 @@ const App = () => {
 
   const handleNameSubmission = (event) => {
     event.preventDefault()
-    let nameObject = {
-      name: newName,
-      id: String(persons.length)
+
+    if((persons.map(person => person.name).includes(newName)) != true) {
+      let nameObject = {
+        name: newName,
+        id: String(persons.length)
+      }
+      setPersons(persons.concat(nameObject))
+      setNewName('')
+    } else {
+      alert(`${newName} is already added to the phonebook`)
     }
-    setPersons(persons.concat(nameObject))
-    setNewName('')
   }
   const handleFieldChange = (event) => {
     console.log(event.target.value)
