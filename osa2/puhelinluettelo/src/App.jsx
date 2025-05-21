@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 const Person = (props) => {
   return(
@@ -45,15 +46,15 @@ const App = () => {
   const url = 'http://localhost:3001/persons'
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+        .then(initialPersons => {
+          console.log(initialPersons)
+        setPersons(initialPersons)
       })
   }, [])
-  
+
+
   const handleNameSubmission = (event) => {
     event.preventDefault()
     if((persons.map(person => person.name).includes(newName)) != true) {
@@ -62,14 +63,14 @@ const App = () => {
         number: newNumber,
         id: String(persons.length+1)
       }
-      setPersons(persons.concat(nameObject))
-      setNewNumber("")
-      setNewName("")
-      axios
-      .post('http://localhost:3001/persons', nameObject)
-      .then(response => {
-        console.log(response)
-        })
+      personService
+        .create(nameObject)
+          .then(returnedPersons => {
+            setPersons(persons.concat(returnedPersons))   
+            setNewNumber("")
+            setNewName("")
+          })              
+
     } else {
       alertMessage(newName)
     }
