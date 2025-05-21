@@ -2,20 +2,31 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
+function alertAlreadyAdded(newName) {
+  alert(`${newName} is already added to the phonebook`)
+}
+
+const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
+
 const Person = (props) => {
+  console.log(props)
   return(
     <li>
-      {props.name} {props.number}
+      {props.name} {props.number} {" "}
+      <button onClick={() => props.alertDeletePerson(props)}>delete</button>
     </li>
   )
 }
 
 const ShowList = (props) => {
+
+  console.log(props)
+
   if(props.results === '') {
     return(
         <ul>
           {props.persons.map(person => 
-            <Person key={person.id} name={person.name} number={person.number} />
+            <Person key={person.id} name={person.name} number={person.number} id={person.id} alertDeletePerson={props.alertDeletePerson} />
         )}
         </ul>
     )
@@ -26,15 +37,11 @@ const ShowList = (props) => {
       return(  
           <ul>
             {searchResults.map(person => 
-              <Person key={person.id} name={person.name} number={person.number} />
+              <Person key={person.id} name={person.name} number={person.number} id={person.id} alertDeletePerson={props.alertDeletePerson} />
           )}
           </ul>
       )
   }
-}
-
-function alertMessage(newName) {
-  alert(`${newName} is already added to the phonebook`)
 }
 
 const App = () => {
@@ -54,7 +61,16 @@ const App = () => {
       })
   }, [])
 
-
+  const alertDeletePerson = (props) => {
+    if (window.confirm(`Delete ${props.name}?`)) {
+      axios.delete(`http://localhost:3001/persons/${props.id}`).then(response => {
+        console.log('User deleted')
+        setPersons(persons.filter(n => n.id !== props.id))
+      })
+    } else {
+      console.log("no")
+    }
+    }
   const handleNameSubmission = (event) => {
     event.preventDefault()
     if((persons.map(person => person.name).includes(newName)) != true) {
@@ -72,7 +88,7 @@ const App = () => {
           })              
 
     } else {
-      alertMessage(newName)
+      alertAlreadyAdded(newName)
     }
   }
   const handleFieldChange = (event) => {
@@ -102,7 +118,7 @@ const App = () => {
         </div>
       <h2>Numbers</h2>
       <div>
-        <ShowList persons={persons} results={searchContact}/>
+        <ShowList persons={persons} results={searchContact} alertDeletePerson={alertDeletePerson}/>
       </div>
     </div>
   )
