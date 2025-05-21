@@ -11,25 +11,25 @@ const Person = (props) => {
 
 const ShowList = (props) => {
   if(props.results === '') {
-  return(
-      <ul>
-        {props.persons.map(person => 
-          <Person key={person.id} name={person.name} number={person.number} />
-      )}
-      </ul>
-  )
-} else {
-  let searchResults = props.persons.filter(person => person.name.toLowerCase().includes(props.results))
-  console.log(searchResults)
-  console.log(props)
-  return(  
-      <ul>
-        {searchResults.map(person => 
-          <Person key={person.id} name={person.name} number={person.number} />
-      )}
-      </ul>
-  )
-}
+    return(
+        <ul>
+          {props.persons.map(person => 
+            <Person key={person.id} name={person.name} number={person.number} />
+        )}
+        </ul>
+    )
+  } else {
+    let searchResults = props.persons.filter(person => person.name.toLowerCase().includes(props.results))
+    console.log(searchResults)
+    console.log(props)
+      return(  
+          <ul>
+            {searchResults.map(person => 
+              <Person key={person.id} name={person.name} number={person.number} />
+          )}
+          </ul>
+      )
+  }
 }
 
 function alertMessage(newName) {
@@ -42,6 +42,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchContact, setSearchContact] = useState('')
   const [searchResult, setSearchResult] = useState('')
+  const url = 'http://localhost:3001/persons'
 
   useEffect(() => {
     console.log('effect')
@@ -59,11 +60,16 @@ const App = () => {
       let nameObject = {
         name: newName,
         number: newNumber,
-        id: String(persons.length)
+        id: String(persons.length+1)
       }
       setPersons(persons.concat(nameObject))
       setNewNumber("")
       setNewName("")
+      axios
+      .post('http://localhost:3001/persons', nameObject)
+      .then(response => {
+        console.log(response)
+        })
     } else {
       alertMessage(newName)
     }
