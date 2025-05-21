@@ -6,8 +6,6 @@ function alertAlreadyAdded(newName) {
   alert(`${newName} is already added to the phonebook`)
 }
 
-const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
-
 const Person = (props) => {
   console.log(props)
   return(
@@ -70,7 +68,8 @@ const App = () => {
     } else {
       console.log("no")
     }
-    }
+  }
+
   const handleNameSubmission = (event) => {
     event.preventDefault()
     if((persons.map(person => person.name).includes(newName)) != true) {
@@ -86,7 +85,23 @@ const App = () => {
             setNewNumber("")
             setNewName("")
           })              
+    } else if((persons.map(person => person.name).includes(newName)) == true) {
+      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        console.log('yes')
+        let oldObject = persons.find(({ name }) => name === newName)
+        let newObject = { ...oldObject, number: newNumber}
 
+        console.log(oldObject)
+        personService
+          .update(oldObject.id, newObject)
+            .then(returnedPersons => {
+              setPersons(persons.map(p => (p.id !== oldObject.id ? p : returnedPersons)))   
+              setNewNumber("")
+              setNewName("")          
+        })
+      } else {
+        console.log('declined')
+      }
     } else {
       alertAlreadyAdded(newName)
     }
