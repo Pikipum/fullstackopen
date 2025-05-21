@@ -31,6 +31,10 @@ const ShowList = (props) => {
 }
 }
 
+function alertMessage(newName) {
+  alert(`${newName} is already added to the phonebook`)
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 0 },
@@ -55,7 +59,7 @@ const App = () => {
       setNewNumber("")
       setNewName("")
     } else {
-      alert(`${newName} is already added to the phonebook`)
+      alertMessage(newName)
     }
   }
   const handleFieldChange = (event) => {
