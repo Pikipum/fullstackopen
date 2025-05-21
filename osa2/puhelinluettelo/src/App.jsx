@@ -1,7 +1,5 @@
 import { useState } from 'react'
 
-// const Button = ({ onClick, text }) => <button type="submit" onClick={onClick}>{text}</button>
-
 const Person = (props) => {
   return(
     <li>
@@ -10,12 +8,40 @@ const Person = (props) => {
   )
 }
 
+const ShowList = (props) => {
+  if(props.results === '') {
+  return(
+      <ul>
+        {props.persons.map(person => 
+          <Person key={person.id} name={person.name} number={person.number} />
+      )}
+      </ul>
+  )
+} else {
+  let searchResults = props.persons.filter(person => person.name.toLowerCase().includes(props.results))
+  console.log(searchResults)
+  console.log(props)
+  return(  
+      <ul>
+        {searchResults.map(person => 
+          <Person key={person.id} name={person.name} number={person.number} />
+      )}
+      </ul>
+  )
+}
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '0213434324', id: '0' }
-  ]) 
+    { name: 'Arto Hellas', number: '040-123456', id: 0 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 1 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 2 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 3 }
+  ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [searchContact, setSearchContact] = useState('')
+  const [searchResult, setSearchResult] = useState('')
 
   const handleNameSubmission = (event) => {
     event.preventDefault()
@@ -40,11 +66,17 @@ const App = () => {
     console.log(event.target.value)
     setNewNumber(event.target.value)
   }
+  const handleSearchFieldChange = (event) => {
+    console.log(event.target.value)
+    setSearchContact(event.target.value)
+  }
 
   return (
     <div>
       <h2>Phonebook</h2>
+          <div>Filter phonebook with <input search={searchContact} onChange={handleSearchFieldChange}/></div>
         <div>
+          <h1>Add a new contact</h1>
             <form onSubmit={handleNameSubmission}>
               <div>name: <input value={newName} onChange={handleFieldChange}/></div>
               <div>number: <input number={newNumber} onChange={handleNumberFieldChange}/></div>            
@@ -53,11 +85,7 @@ const App = () => {
         </div>
       <h2>Numbers</h2>
       <div>
-        <ul>
-          {persons.map(person => 
-            <Person key={person.id} name={person.name} number={person.number} />
-        )}
-        </ul>
+        <ShowList persons={persons} results={searchContact}/>
       </div>
     </div>
   )
