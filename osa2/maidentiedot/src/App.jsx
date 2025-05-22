@@ -9,11 +9,10 @@ const Search = (props) => {
     <input search={props.search} onChange={props.onChange} />
   )
 }
-
-const Country = (props) => {
+const Country = ({ country, onShow }) => {
   return (
     <li>
-      {props.name}
+      {country.name.common} <button onClick={() => onShow(country)}>Show</button>
     </li>
   )
 }
@@ -25,8 +24,9 @@ const Flag = (props) => {
 }
 
 const CountryExtended = (props) => {
-  console.log(props.country[0].name.common)
-  const country = props.country[0]
+  console.log(props)
+  console.log(props.country.name.common)
+  const country = props.country
   return (
     <div>
       <h1>{country.name.common} </h1>
@@ -38,7 +38,6 @@ const CountryExtended = (props) => {
     </div>
   )
 }
-
 const Language = (props) => {
   return (
     <li>
@@ -56,11 +55,11 @@ const ShowLanguageList = (props) => {
     </ul>
   )
 }
-
 const ShowList = (props) => {
+  const { countries, search, selectedCountry, setSelectedCountry } = props
 
-  if (props.search != null) {
-    let searchResults = props.countries.filter(country => country.name.common.toLowerCase().includes(props.search))
+  if (search != null) {
+    let searchResults = countries.filter(country => country.name.common.toLowerCase().includes(props.search))
 
     if (searchResults.length > 10) {
       return (
@@ -72,15 +71,20 @@ const ShowList = (props) => {
       )
     } else if (searchResults.length > 1) {
       return (
-        <ul>
+        <>
           {searchResults.map(country =>
-            <Country key={country.id} name={country.name.common} />
+            <div key={country.cca3}>
+              {selectedCountry && selectedCountry.cca3 === country.cca3
+                ? <CountryExtended country={country} />
+                : <Country country={country} onShow={setSelectedCountry} />
+              }
+            </div>
           )}
-        </ul>
+        </>
       )
     } else if (searchResults.length == 1) {
       return (
-        <CountryExtended country={searchResults} />
+        <CountryExtended country={searchResults[0]} />
       )
     }
   } else {
@@ -94,6 +98,7 @@ const ShowList = (props) => {
 function App() {
   const [searchCountry, setSearchCountry] = useState(null)
   const [countryList, setCountryList] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   const handleSearchFieldChange = (event) => {
     event.preventDefault()
@@ -119,7 +124,13 @@ function App() {
         Country info
       </div>
       <div>Find countries: <Search search={searchCountry} onChange={handleSearchFieldChange} /></div>
-      <div><ShowList countries={countryList} search={searchCountry} /></div>
+      <div><ShowList
+        countries={countryList}
+        search={searchCountry}
+        selectedCountry={selectedCountry}
+        setSelectedCountry={setSelectedCountry}
+      />
+      </div>
     </>
   )
 }
