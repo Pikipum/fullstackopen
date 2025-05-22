@@ -72,20 +72,44 @@ const App = () => {
         console.log(initialPersons)
         setPersons(initialPersons)
       })
+      .catch(error => {
+        console.log(error)
+
+        setErrorMessage(
+          `Could not access the server.`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
   }, [])
 
   const alertDeletePerson = (props) => {
     if (window.confirm(`Delete ${props.name}?`)) {
-      axios.delete(`http://localhost:3001/persons/${props.id}`).then(response => {
-        console.log('User deleted')
-        setPersons(persons.filter(n => n.id !== props.id))
-      })
-      setErrorMessage(
-        `Person '${props.name}' has been deleted from the phonebook.`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      axios
+        .delete(`http://localhost:3001/persons/${props.id}`)
+        .then(response => {
+          console.log('User deleted')
+          setPersons(persons.filter(n => n.id !== props.id))
+
+          setErrorMessage(
+            `Person '${props.name}' has been deleted from the phonebook.`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
+        .catch(error => {
+          console.log(error)
+
+          setErrorMessage(
+            `Could not delete '${props.name}' from the phonebook. Already removed from the server.`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
+
     } else {
       console.log("no")
     }
@@ -105,13 +129,26 @@ const App = () => {
           setPersons(persons.concat(returnedPersons))
           setNewNumber("")
           setNewName("")
+
+          setErrorMessage(
+            `Person '${newName}' has been added to the phonebook.`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
-      setErrorMessage(
-        `Person '${newName}' has been added to the phonebook.`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+        .catch(error => {
+          console.log(error)
+
+          setErrorMessage(
+            `Could not add '${newName}' to the phonebook. Already removed from the server.`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
+
+
     } else if ((persons.map(person => person.name).includes(newName)) == true) {
       if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
         console.log('yes')
@@ -125,13 +162,24 @@ const App = () => {
             setPersons(persons.map(p => (p.id !== oldObject.id ? p : returnedPersons)))
             setNewNumber("")
             setNewName("")
+
+            setErrorMessage(
+              `The number for '${newName}' has been updated.`
+            )
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
           })
-        setErrorMessage(
-          `The number for '${newName}' has been updated.`
-        )
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+          .catch(error => {
+            console.log(error)
+
+            setErrorMessage(
+              `Could not update number. '${newName}' Already removed from the server.`
+            )
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
       } else {
         console.log('declined')
       }
