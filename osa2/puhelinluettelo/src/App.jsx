@@ -4,10 +4,6 @@ import personService from './services/persons'
 
 // TODO: Henkilön lisäys, poisto, numeron muutos uudella virheilmoituksella
 
-function alertAlreadyAdded(newName) {
-  alert(`${newName} is already added to the phonebook`)
-}
-
 const Notification = ({ message }) => {
   if (message === null) {
     return null
@@ -62,8 +58,6 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchContact, setSearchContact] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
-  const [searchResult, setSearchResult] = useState('')
-  const url = 'http://localhost:3001/persons'
 
   useEffect(() => {
     personService
@@ -184,7 +178,6 @@ const App = () => {
         console.log('declined')
       }
     } else {
-      //alertAlreadyAdded(newName)
       setErrorMessage(
         `Person '${newName}' already exists in the phonebook.`
       )
