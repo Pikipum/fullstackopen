@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let phonebook =
 {
     "persons": [
@@ -27,6 +29,9 @@ let phonebook =
     ]
 }
 
+const randomId = () => {
+    return Math.floor(Math.random() * 10000)
+}
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
@@ -39,7 +44,7 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/info', (request, response) => {
-    response.send(`<p>Phonebok has info for ${phonebook.persons.length} people</p><p>${Date()}</p>`)
+    response.send(`<p>Phonebook has info for ${phonebook.persons.length} people</p><p>${Date()}</p>`)
     console.log('Phonebook sent!')
 })
 
@@ -61,6 +66,29 @@ app.delete('/api/persons/:id', (request, response) => {
 
     phonebook.persons = phonebook.persons.filter(person => person.id !== id)
     response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+
+    if (!body.person || !body.number) {
+        return response.status(400).json({
+            error: 'Person or number missing'
+        })
+    }
+
+    console.log(request)
+    console.log(body)
+
+    const addPerson = {
+        person: body.person,
+        number: body.number,
+        id: randomId()
+    }
+    //console.log(addPerson)
+    phonebook.persons = phonebook.persons.concat(addPerson)
+    response.json(addPerson)
+
 })
 
 const PORT = 3001
