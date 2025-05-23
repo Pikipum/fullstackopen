@@ -43,6 +43,20 @@ app.get('/info', (request, response) => {
     console.log('Phonebook sent!')
 })
 
+app.get('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    let person = phonebook[0].persons.find(person => person.id == id)
+    if (person) {
+        response.json(person)
+        console.log('Contact sent')
+    } else {
+        return response.status(404).json({
+            error: 'content missing'
+        })
+    }
+
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
