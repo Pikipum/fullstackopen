@@ -30,12 +30,12 @@ let phonebook = [
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
-    console.log('Hello world sent')
+    console.log('Hello world sent!')
 })
 
 app.get('/api/persons', (request, response) => {
     response.json(phonebook)
-    console.log('Phonebook sent')
+    console.log('Phonebook sent!')
 })
 
 const PORT = 3001
