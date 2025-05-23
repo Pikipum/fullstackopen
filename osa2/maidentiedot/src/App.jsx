@@ -23,10 +23,36 @@ const Flag = (props) => {
   )
 }
 
+const Weather = ({ country, api_key }) => {
+  const [weather, setWeather] = useState(null)
+
+  useEffect(() => {
+    axios
+    .get(`http://api.openweathermap.org/data/2.5/weather?q=${country.capital}&&appid=${api_key}&units=metric`)
+      .then(response => {
+        setWeather(response.data)
+      })
+      .catch(error => {
+        setWeather(null)
+        console.log('Could not reach server', error)
+      })
+  }, [country.capital, api_key])
+
+  if (weather) {
+    console.log(weather)
+    return (
+      <>
+        <p>Temperature in {country.capital} {weather.main.temp} °C</p>
+        <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={weather.weather[0].description} />
+        <p>Wind {weather.wind.speed} m/s </p>
+      </>
+    )
+  }
+}
+
 const CountryExtended = (props) => {
-  console.log(props)
-  console.log(props.country.name.common)
   const country = props.country
+
   return (
     <div>
       <h1>{country.name.common} </h1>
@@ -35,6 +61,7 @@ const CountryExtended = (props) => {
       <h2>Languages</h2>
       <ShowLanguageList languages={country.languages} />
       <Flag flag={country.flags} />
+      <Weather country={country} api_key={props.api_key} />
     </div>
   )
 }
@@ -75,7 +102,7 @@ const ShowList = (props) => {
           {searchResults.map(country =>
             <div key={country.cca3}>
               {selectedCountry && selectedCountry.cca3 === country.cca3
-                ? <CountryExtended country={country} />
+                ? <CountryExtended country={country} api_key={props.api_key} />
                 : <Country country={country} onShow={setSelectedCountry} />
               }
             </div>
@@ -84,7 +111,7 @@ const ShowList = (props) => {
       )
     } else if (searchResults.length == 1) {
       return (
-        <CountryExtended country={searchResults[0]} />
+        <CountryExtended country={searchResults[0]} api_key={props.api_key} />
       )
     }
   } else {
@@ -96,6 +123,7 @@ const ShowList = (props) => {
 }
 
 function App() {
+  const api_key = import.meta.env.VITE_API_KEY
   const [searchCountry, setSearchCountry] = useState(null)
   const [countryList, setCountryList] = useState([])
   const [selectedCountry, setSelectedCountry] = useState(null)
@@ -129,6 +157,7 @@ function App() {
         search={searchCountry}
         selectedCountry={selectedCountry}
         setSelectedCountry={setSelectedCountry}
+        api_key={api_key}
       />
       </div>
     </>
