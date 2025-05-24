@@ -25,6 +25,11 @@ let phonebook =
             "id": "3"
         },
         {
+            "name": "TestGuy",
+            "number": "12345678",
+            "id": "123"
+        },
+        {
             "name": "Mary Poppendieck",
             "number": "39-23-6423122",
             "id": "4"
