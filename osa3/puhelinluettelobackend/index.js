@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 
@@ -14,8 +15,9 @@ app.use(morgan(':method :url :status :res[content-length] :response-time ms :per
 const cors = require('cors')
 app.use(cors())
 
+const Person = require('./models/person')
 
-
+/*
 let phonebook =
 {
     "persons": [
@@ -46,6 +48,7 @@ let phonebook =
         }
     ]
 }
+    */
 
 const randomId = () => {
     return Math.floor(Math.random() * 10000)
@@ -57,9 +60,15 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(phonebook.persons)
-    console.log('Phonebook sent!')
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
+/*
+response.json(phonebook.persons)
+console.log('Phonebook sent!')
+*/
+
 
 app.get('/info', (request, response) => {
     response.send(`<p>Phonebook has info for ${phonebook.persons.length} people</p><p>${Date()}</p>`)
@@ -67,6 +76,10 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
+    Person.findById(request.params.id).then(person => {
+        response.json(person)
+    })
+    /*
     const id = request.params.id
     let person = phonebook.persons.find(person => person.id == id)
     if (person) {
@@ -77,13 +90,20 @@ app.get('/api/persons/:id', (request, response) => {
             error: 'content missing'
         }).end()
     }
+        */
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
+    Person.findById(request.params.id).then(person => {
+        response.json(person)
+    })
 
+    /*
+    const id = request.params.id
+ 
     phonebook.persons = phonebook.persons.filter(person => person.id !== id)
     response.status(204).end()
+    */
 })
 
 app.post('/api/persons', (request, response) => {
@@ -94,25 +114,32 @@ app.post('/api/persons', (request, response) => {
             error: 'name or number missing'
         })
     }
+    /*
+        if (phonebook.persons.some(person => person.name === body.name)) {
+            return response.status(400).json({
+                error: 'name already in phonebook'
+            })
+        }
+            */
 
-    if (phonebook.persons.some(person => person.name === body.name)) {
-        return response.status(400).json({
-            error: 'name already in phonebook'
-        })
-    }
-
-    const addPerson = {
+    const addPerson = new Person({
         name: body.name,
         number: body.number,
         id: randomId()
-    }
-    //console.log(addPerson)
+    })
+
+    addPerson.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
+    /*
     phonebook.persons = phonebook.persons.concat(addPerson)
     response.json(addPerson)
+    */
 
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
