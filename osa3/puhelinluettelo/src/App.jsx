@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
-// TODO: Henkilön lisäys, poisto, numeron muutos uudella virheilmoituksella
-
 const Notification = ({ message }) => {
   if (message === null) {
     return null
