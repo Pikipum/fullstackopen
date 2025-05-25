@@ -80,8 +80,8 @@ const App = () => {
 
   const alertDeletePerson = (props) => {
     if (window.confirm(`Delete ${props.name}?`)) {
-      axios
-        .delete(`http://localhost:3001/persons/${props.id}`)
+      personService
+        .deletePerson(props.id)
         .then(response => {
           console.log('User deleted')
           setPersons(persons.filter(n => n.id !== props.id))

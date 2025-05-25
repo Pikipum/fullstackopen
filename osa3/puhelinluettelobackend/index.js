@@ -10,6 +10,9 @@ morgan.token('persons', function (req, res) {
 })
 app.use(morgan(':method :url :status :res[content-length] :response-time ms :persons'))
 
+const cors = require('cors')
+app.use(cors())
+
 
 
 let phonebook =
