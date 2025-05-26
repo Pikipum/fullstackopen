@@ -68,7 +68,7 @@ const App = () => {
         console.log(error)
 
         setErrorMessage(
-          `Could not access the server ${error.response.data}.`
+          `Could not access the server '${error.response?.data?.error}'.`
         )
         setTimeout(() => {
           setErrorMessage(null)
@@ -95,7 +95,7 @@ const App = () => {
           console.log(error)
 
           setErrorMessage(
-            `Could not delete '${props.name}' from the phonebook. Already removed from the server ${error.response.data}.`
+            `Could not delete '${props.name}' from the phonebook. Already removed from the server '${error.response?.data?.error}'.`
           )
           setTimeout(() => {
             setErrorMessage(null)
@@ -131,10 +131,13 @@ const App = () => {
         })
         .catch(error => {
           console.log(error)
-
+          /*
           setErrorMessage(
-            `Could not add '${newName}' to the phonebook. Already removed from the server ${error.response.data}.`
+            `Could not add '${newName}' to the phonebook. ${error.response.data}.`
           )
+            */
+          setErrorMessage(error.response?.data?.error || "An error occurred")
+
           setTimeout(() => {
             setErrorMessage(null)
           }, 5000)
@@ -166,7 +169,7 @@ const App = () => {
             console.log(error)
 
             setErrorMessage(
-              `Could not update number. '${newName}' Already removed from the server ${error.response.data}.`
+              `Could not update number. '${newName}' Already removed from the server '${error.response?.data?.error}'.`
             )
             setTimeout(() => {
               setErrorMessage(null)
