@@ -3,12 +3,9 @@ const dummy = (blogs) => {
 }
 
 const totalVotes = (blogs) => {
-    let total = 0
-    blogs.map(blog => {
-        total += blog.votes
-    })
 
-    return total
+    return blogs.reduce(
+        (total, blog) => total + blog.votes, 0)
 }
 
 module.exports = {
