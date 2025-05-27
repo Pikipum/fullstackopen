@@ -73,3 +73,10 @@ describe('author with most blogs', () => {
         assert.strictEqual(result.author, 'Robert C. Martin')
     })
 })
+
+describe('author with most votes', () => {
+    test('test author with the most votes', () => {
+        const result = listHelper.mostVotes(blogs)
+        assert.strictEqual(result.author, 'Edsger W. Dijkstra')
+    })
+})
