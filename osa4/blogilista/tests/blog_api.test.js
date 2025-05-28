@@ -25,6 +25,15 @@ test('blogs have correct id field', async () => {
     assert.strictEqual(Object.keys(response.body[0]).includes('id'), true)
 })
 
+test('blogs can be added', async () => {
+    const blogsBefore = await api.get('/api/blogs')
+    await api.post('/api/blogs')
+    .expect(201)
+
+    const blogsAfter = await api.get('/api/blogs')
+    assert.strictEqual(blogsAfter.body.length, blogsBefore.body.length+1)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
