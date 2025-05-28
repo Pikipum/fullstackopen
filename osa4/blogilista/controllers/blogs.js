@@ -16,9 +16,12 @@ blogsRouter.post('/', async (request, response) => {
 
   logger.info(request.body)
   logger.info(blog)
-
-  const result = await blog.save()
-  response.status(201).json(result)
+  try {
+    const result = await blog.save()
+    response.status(201).json(result)
+  } catch (err) {
+    response.status(400).json(err)
+  }
 })
 
 

@@ -4,8 +4,8 @@ mongoose.set('strictQuery', false)
 
 const blogSchema = new mongoose.Schema({
   author: String,
-  title: String,
-  blogUrl: String,
+  title: { type: String, required: true },
+  blogUrl: { type: String, required: true },
   votes: Number
 })
 

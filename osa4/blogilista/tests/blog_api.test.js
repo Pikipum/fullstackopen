@@ -28,16 +28,7 @@ test('blogs have correct id field', async () => {
 test('blogs can be added', async () => {
     const blogsBefore = await api.get('/api/blogs')
 
-    const newBlog = {
-        'id': "1234567789",
-        'title': "Testing API",
-        'author': "John Tester",
-        'blogUrl': "https://testingstuff.com/",
-        'votes': 7,
-        '__v': 0
-    }
-
-    await api.post('/api/blogs').send(newBlog)
+    await api.post('/api/blogs').send(helper.testBlog)
         .expect(201)
 
     const blogsAfter = await api.get('/api/blogs')
@@ -46,17 +37,18 @@ test('blogs can be added', async () => {
 })
 
 test('adding blog with no votes value sets votes to 0', async () => {
-
-    const blogWithNoVotes = {
-        'id': "1234567789",
-        'title': "Testing API",
-        'author': "John Tester",
-        'blogUrl': "https://testingstuff.com/"
-    }
-
-    response = await api.post('/api/blogs').send(blogWithNoVotes)
-
+    response = await api.post('/api/blogs').send(helper.blogWithNoVotes)
     assert.strictEqual(response.body.votes, 0)
+})
+
+test('adding blog with no url receives 400 Bad Request', async () => {
+    await api.post('/api/blogs').send(helper.blogWithNoUrl)
+        .expect(400)
+})
+
+test('adding blog with no title receives 400 Bad Request', async () => {
+    await api.post('/api/blogs').send(helper.blogWithNoTitle)
+        .expect(400)
 })
 
 after(async () => {

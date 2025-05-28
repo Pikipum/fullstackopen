@@ -49,4 +49,36 @@ const initialBlogs = [
     }
 ]
 
-module.exports = { initialBlogs }
+const testBlog = {
+    'id': "1234567789",
+    'title': "Testing API",
+    'author': "John Tester",
+    'blogUrl': "https://testingstuff.com/",
+    'votes': 7,
+    '__v': 0
+}
+
+const blogWithNoVotes = {
+    'id': "333333333",
+    'title': "Testing API",
+    'author': "John Tester",
+    'blogUrl': "https://testingstuff.com/"
+}
+
+const blogWithNoTitle = {
+    'id': "22222222222",
+    'author': "John TitleTester",
+    'blogUrl': "https://testingstuff.com/",
+    'votes': 7,
+    '__v': 0
+}
+
+const blogWithNoUrl = {
+    'id': "11111111111",
+    'title': "Testing URL",
+    'author': "John UrlTester",
+    'votes': 7,
+    '__v': 0
+}
+
+module.exports = { initialBlogs, testBlog, blogWithNoVotes, blogWithNoTitle, blogWithNoUrl }
