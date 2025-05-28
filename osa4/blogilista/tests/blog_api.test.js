@@ -56,8 +56,13 @@ test('deleting a blog by id returns 204', async () => {
     await api.delete(`/api/blogs/${helper.initialBlogs[0]._id}`)
         .expect(204)
     const blogsAfter = await api.get('/api/blogs')
- 
+
     assert.strictEqual(blogsBefore.body.length, blogsAfter.body.length + 1)
+})
+
+test('updating a blog by id returns 200 OK', async () => {
+    await api.put(`/api/blogs/${helper.initialBlogs[2]._id}`).send(helper.updatedBlog)
+        .expect(200)
 })
 
 after(async () => {

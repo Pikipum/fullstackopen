@@ -81,4 +81,13 @@ const blogWithNoUrl = {
     '__v': 0
 }
 
-module.exports = { initialBlogs, testBlog, blogWithNoVotes, blogWithNoTitle, blogWithNoUrl }
+const updatedBlog = {
+    _id: "5a422b3a1b54a676234d17f9",
+    title: "Canonical string reduction VERSION 2",
+    author: "Edsger W. Dijkstra Jr.",
+    blogUrl: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    votes: 200,
+    __v: 0
+}
+
+module.exports = { initialBlogs, testBlog, blogWithNoVotes, blogWithNoTitle, blogWithNoUrl, updatedBlog }
