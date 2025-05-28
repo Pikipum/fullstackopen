@@ -51,6 +51,15 @@ test('adding blog with no title receives 400 Bad Request', async () => {
         .expect(400)
 })
 
+test('deleting a blog by id returns 204', async () => {
+    const blogsBefore = await api.get('/api/blogs')
+    await api.delete(`/api/blogs/${helper.initialBlogs[0]._id}`)
+        .expect(204)
+    const blogsAfter = await api.get('/api/blogs')
+ 
+    assert.strictEqual(blogsBefore.body.length, blogsAfter.body.length + 1)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
