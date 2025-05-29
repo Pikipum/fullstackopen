@@ -18,7 +18,7 @@ blogsRouter.post('/', async (request, response) => {
   if (!user) {
     return response.status(400).json({ error: 'User not found' })
   }
-  
+
   blog.user = user
 
   logger.info(request.body)
