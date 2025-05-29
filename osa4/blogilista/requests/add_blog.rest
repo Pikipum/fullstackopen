@@ -5,5 +5,6 @@ Content-Type: application/json
     "author": "John Blogger",
     "title": "Test blog",
     "blogUrl": "johnsblog.com/testblog",
-    "votes": 2
+    "votes": 2,
+    "user": "68386eb39df6020db2629c92"
 }
