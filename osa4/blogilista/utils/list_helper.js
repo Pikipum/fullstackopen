@@ -51,6 +51,7 @@ const mostVotes = (blogs) => {
     return authorWithMostVotes
 }
 
+
 module.exports = {
     dummy,
     totalVotes,
