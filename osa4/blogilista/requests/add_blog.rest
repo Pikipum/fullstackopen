@@ -3,8 +3,8 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG5Vc2VyMTMzNyIsImlkIjoiNjgzODhmZmM2MGVhOTBjYWMwNjI2NmFlIiwiaWF0IjoxNzQ4NTM3NjM4fQ.z22wRdjo-eEJLu018-6B-2bQFsHYlrzW8RuB6BJhrww
 
 {
-    "author": "John Blogger",
-    "title": "Test blog part 2",
+    "author": "John B.",
+    "title": "Test blog part 7",
     "blogUrl": "johnsblog.com/testblog",
     "votes": 2
 }
