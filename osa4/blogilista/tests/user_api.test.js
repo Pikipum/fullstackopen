@@ -1,3 +1,4 @@
+
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const Blog = require('../models/blog')
@@ -7,15 +8,9 @@ const supertest = require('supertest')
 const app = require('../app')
 const assert = require('node:assert')
 const helper = require('./test_helper')
-
 const api = supertest(app)
-/*
-beforeEach(async () => {
-    await User.deleteMany({})
-    await User.insertMany(helper.initialUsers)
-})
-    */
-
+const { userExtractor } = require('../utils/middleware')
+const jwt = require('jsonwebtoken')
 
 describe('when there is initially one user at db', () => {
   beforeEach(async () => {
@@ -31,9 +26,9 @@ describe('when there is initially one user at db', () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
-      username: 'mluukkai',
-      name: 'Matti Luukkainen',
-      password: 'salainen',
+      username: 'jtest1',
+      name: 'John Tester',
+      password: 'salainen'
     }
 
     await api
@@ -111,7 +106,30 @@ describe('when there is initially one user at db', () => {
     const usernames = usersAtEnd.map(u => u.username)
     assert.strictEqual(usernames.includes(invalidUser.username), false)
   })
+  
   test('creation fails with short username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const invalidUser = {
+      username: 'sh',
+      name: 'mr. shortusername',
+      password: '0f9uj430jf',
+    }
+
+    await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    assert.strictEqual(usernames.includes(invalidUser.username), false)
+  })
+
+  test('creation fails with no token', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const invalidUser = {

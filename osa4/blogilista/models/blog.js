@@ -6,7 +6,7 @@ const blogSchema = new mongoose.Schema({
   author: String,
   title: { type: String, required: true },
   blogUrl: { type: String, required: true },
-  votes: Number,
+  votes: {type: Number, default: 0 },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

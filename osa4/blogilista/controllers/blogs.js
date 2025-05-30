@@ -13,10 +13,6 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', userExtractor, async (request, response) => {
   const blog = new Blog(request.body)
 
-  if (!blog.votes) {
-    blog['votes'] = 0
-  }
-
   const user = request.user
 
   if (!user) {
@@ -32,9 +28,9 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
-    response.status(201).json(result)
+    response.status(201).json(savedBlog)
   } catch (err) {
-    response.status(400).json(err)
+    response.status(400).json({ err: 'could not save blog' })
   }
 })
 
@@ -62,9 +58,6 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
 
   if (!user) {
     return response.status(400).json({ error: 'UserID missing or not valid' })
-  }
-  if (user.name != author) {
-    return response.status(400).json({ error: 'invalid user' })
   }
 
   if (!blogUrl || !title) {
