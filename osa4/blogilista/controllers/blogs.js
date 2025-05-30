@@ -3,30 +3,27 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const logger = require('../utils/logger')
 const jwt = require('jsonwebtoken')
+const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user')
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const blog = new Blog(request.body)
 
   if (!blog.votes) {
     blog['votes'] = 0
   }
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   if (!user) {
     return response.status(400).json({ error: 'UserID missing or not valid' })
   }
 
-  blog.user = user._id
+  blog.user = request.user.id
 
   logger.info(request.body)
   logger.info(blog)
@@ -41,32 +38,34 @@ blogsRouter.post('/', async (request, response) => {
   }
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   if (!user) {
     return response.status(400).json({ error: 'UserID missing or not valid' })
   }
 
-  
   const blog = await Blog.findById(request.params.id)
   if (blog.user.toString() === user.id.toString()) {
     await Blog.findByIdAndDelete(request.params.id)
-  response.status(204).end()
+    response.status(204).end()
   } else {
     response.status(400).json({ error: 'invalid user' })
   }
-
-  
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const { author, title, blogUrl, votes } = request.body
+
+  const user = request.user
+
+  if (!user) {
+    return response.status(400).json({ error: 'UserID missing or not valid' })
+  }
+  if (user.name != author) {
+    return response.status(400).json({ error: 'invalid user' })
+  }
 
   if (!blogUrl || !title) {
     return response.status(400).json({
