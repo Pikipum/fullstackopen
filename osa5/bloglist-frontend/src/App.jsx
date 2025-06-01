@@ -3,6 +3,18 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
+
 const CreateBlogForm = (props) => {
   return (
     <div>
@@ -73,11 +85,19 @@ const App = () => {
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
   const [newTitle, setNewTitle] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
-    )
+    ).catch(error => {
+      setErrorMessage(
+        `Could not retrieve blogs.`, error
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    })
   }, [])
 
   useEffect(() => {
@@ -97,11 +117,26 @@ const App = () => {
       setName(response.data.name)
       window.localStorage.setItem('user', response.data.token)
       window.localStorage.setItem('name', response.data.name)
+
+      setErrorMessage(
+        `Login succesful, logged in as ${response.data.name}.`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+
     } catch (error) {
       console.log('login failed', error)
+      setErrorMessage(
+        `Wrong username or password.`, error
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
   const handleBlogSubmission = async (event) => {
+    event.preventDefault()
     try {
       const response = await blogService.post(
         {
@@ -110,8 +145,25 @@ const App = () => {
           blogUrl: newUrl
         }, user
       )
+
+      setErrorMessage(
+        `Blog ${newTitle} submitted succesfully!.`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+      setNewAuthor('')
+      setNewTitle('')
+      setNewUrl('')
+
     } catch (error) {
       console.log('submission failed', error)
+      setErrorMessage(
+        `Could not submit blog.`, error
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
   const handleNameFieldChange = (event) => {
@@ -127,6 +179,13 @@ const App = () => {
     window.localStorage.removeItem('name')
     setUser(null)
     setName(null)
+
+    setErrorMessage(
+        `Log out succesful.`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
   }
 
   const handleTitleFieldChange = (event) => {
@@ -141,6 +200,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={errorMessage} />
       <LoginScreen user={user} blogs={blogs}
         newUserName={newUserName} newPassword={newPassword}
         handleLoginSubmission={handleLoginSubmission}
