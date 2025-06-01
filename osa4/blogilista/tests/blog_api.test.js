@@ -103,7 +103,5 @@ describe('test regarding blogs', () => {
 })
 
 after(async () => {
-    await Blog.deleteMany({})
-    await User.deleteMany({})
     await mongoose.connection.close()
 })
