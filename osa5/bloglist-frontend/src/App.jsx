@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -64,13 +65,15 @@ const LoginScreen = (props) => {
     <div>
       <h2>blogs</h2>
       <ShowUser name={props.name} handleLogout={props.handleLogout} />
-      <CreateBlogForm newTitle={props.newTitle}
-        newAuthor={props.newAuthor}
-        newUrl={props.newUrl}
-        handleTitleFieldChange={props.handleTitleFieldChange}
-        handleAuthorFieldChange={props.handleAuthorFieldChange}
-        handleUrlFieldChange={props.handleUrlFieldChange}
-        handleBlogSubmission={props.handleBlogSubmission} />
+      <Togglable buttonLabel='Create blog' ref={props.blogFormRef}>
+        <CreateBlogForm newTitle={props.newTitle}
+          newAuthor={props.newAuthor}
+          newUrl={props.newUrl}
+          handleTitleFieldChange={props.handleTitleFieldChange}
+          handleAuthorFieldChange={props.handleAuthorFieldChange}
+          handleUrlFieldChange={props.handleUrlFieldChange}
+          handleBlogSubmission={props.handleBlogSubmission} />
+      </Togglable>
       <BlogView blogs={props.blogs} />
     </div>
   )
@@ -86,6 +89,8 @@ const App = () => {
   const [newUrl, setNewUrl] = useState('')
   const [newTitle, setNewTitle] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -136,6 +141,7 @@ const App = () => {
     }
   }
   const handleBlogSubmission = async (event) => {
+    blogFormRef.current.toggleVisibility()
     event.preventDefault()
     try {
       const response = await blogService.post(
@@ -145,16 +151,16 @@ const App = () => {
           blogUrl: newUrl
         }, user
       )
-
+      setNewAuthor('')
+      setNewTitle('')
+      setNewUrl('')
       setErrorMessage(
         `Blog ${newTitle} submitted succesfully!.`
       )
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-      setNewAuthor('')
-      setNewTitle('')
-      setNewUrl('')
+
 
     } catch (error) {
       console.log('submission failed', error)
@@ -181,11 +187,11 @@ const App = () => {
     setName(null)
 
     setErrorMessage(
-        `Log out succesful.`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      `Log out succesful.`
+    )
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
   }
 
   const handleTitleFieldChange = (event) => {
@@ -211,7 +217,8 @@ const App = () => {
         handleTitleFieldChange={handleTitleFieldChange}
         handleAuthorFieldChange={handleAuthorFieldChange}
         handleUrlFieldChange={handleUrlFieldChange}
-        handleBlogSubmission={handleBlogSubmission} />
+        handleBlogSubmission={handleBlogSubmission}
+        blogFormRef={blogFormRef} />
     </div>
   )
 }
