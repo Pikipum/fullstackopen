@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
+import CreateBlogForm from './components/CreateBlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -12,20 +13,6 @@ const Notification = ({ message }) => {
   return (
     <div className="error">
       {message}
-    </div>
-  )
-}
-
-const CreateBlogForm = (props) => {
-  return (
-    <div>
-      <h2>Create new blog</h2>
-      <form onSubmit={props.handleBlogSubmission}>
-        <div>Title: <input name="title" value={props.newTitle} onChange={props.handleTitleFieldChange} /></div>
-        <div>Author: <input name="author" value={props.newAuthor} onChange={props.handleAuthorFieldChange} /></div>
-        <div>URL: <input name="url" value={props.newUrl} onChange={props.handleUrlFieldChange} /></div>
-        <button type='submit'>Create</button>
-      </form>
     </div>
   )
 }
@@ -66,13 +53,11 @@ const LoginScreen = (props) => {
       <h2>blogs</h2>
       <ShowUser name={props.name} handleLogout={props.handleLogout} />
       <Togglable buttonLabel='Create blog' ref={props.blogFormRef}>
-        <CreateBlogForm newTitle={props.newTitle}
-          newAuthor={props.newAuthor}
-          newUrl={props.newUrl}
-          handleTitleFieldChange={props.handleTitleFieldChange}
-          handleAuthorFieldChange={props.handleAuthorFieldChange}
-          handleUrlFieldChange={props.handleUrlFieldChange}
-          handleBlogSubmission={props.handleBlogSubmission} />
+        <CreateBlogForm
+          addBlog={props.addBlog}
+          blogFormRef={props.blogFormRef}
+          setErrorMessage={props.setErrorMessage}
+        />
       </Togglable>
       <BlogView blogs={props.blogs} />
     </div>
@@ -85,9 +70,6 @@ const App = () => {
   const [name, setName] = useState(null)
   const [newUserName, setNewUserName] = useState('')
   const [newPassword, setNewPassword] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-  const [newTitle, setNewTitle] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
 
   const blogFormRef = useRef()
@@ -140,38 +122,14 @@ const App = () => {
       }, 5000)
     }
   }
-  const handleBlogSubmission = async (event) => {
-    blogFormRef.current.toggleVisibility()
-    event.preventDefault()
-    try {
-      const response = await blogService.post(
-        {
-          author: newAuthor,
-          title: newTitle,
-          blogUrl: newUrl
-        }, user
-      )
-      setNewAuthor('')
-      setNewTitle('')
-      setNewUrl('')
-      setErrorMessage(
-        `Blog ${newTitle} submitted succesfully!.`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
 
-
-    } catch (error) {
-      console.log('submission failed', error)
-      setErrorMessage(
-        `Could not submit blog.`, error
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+  const addBlog = async (blogObject) => {
+    const response = await blogService.post(blogObject, user)
+    setBlogs(blogs.concat(response))
+    return response
   }
+
+
   const handleNameFieldChange = (event) => {
     setNewUserName(event.target.value)
     console.log(event.target.value)
@@ -194,31 +152,23 @@ const App = () => {
     }, 5000)
   }
 
-  const handleTitleFieldChange = (event) => {
-    setNewTitle(event.target.value)
-  }
-  const handleAuthorFieldChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
-  const handleUrlFieldChange = (event) => {
-    setNewUrl(event.target.value)
-  }
-
   return (
     <div>
       <Notification message={errorMessage} />
-      <LoginScreen user={user} blogs={blogs}
-        newUserName={newUserName} newPassword={newPassword}
+      <LoginScreen
+        user={user}
+        blogs={blogs}
+        newUserName={newUserName}
+        newPassword={newPassword}
         handleLoginSubmission={handleLoginSubmission}
         handleNameFieldChange={handleNameFieldChange}
         handlePasswordFieldChange={handlePasswordFieldChange}
         name={name}
         handleLogout={handleLogout}
-        handleTitleFieldChange={handleTitleFieldChange}
-        handleAuthorFieldChange={handleAuthorFieldChange}
-        handleUrlFieldChange={handleUrlFieldChange}
-        handleBlogSubmission={handleBlogSubmission}
-        blogFormRef={blogFormRef} />
+        blogFormRef={blogFormRef}
+        addBlog={addBlog}
+        setErrorMessage={setErrorMessage}
+      />
     </div>
   )
 }
