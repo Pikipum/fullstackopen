@@ -75,8 +75,10 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    blogService.getAll().then(blogs => {
+      blogs.sort((a, b) => b.votes - a.votes)
       setBlogs(blogs)
+    }
     ).catch(error => {
       setErrorMessage(
         `Could not retrieve blogs.`, error
@@ -132,6 +134,7 @@ const App = () => {
   const updateBlog = async (blogObject) => {
     const response = await blogService.put(blogObject._id, blogObject, user)
     const updatedBlogs = await blogService.getAll()
+    updatedBlogs.sort((a, b) => b.votes - a.votes)
     setBlogs(updatedBlogs)
     return response
   }
