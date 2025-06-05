@@ -1,10 +1,19 @@
 import { useState } from "react"
 
-const Blog = ({ blog, updateBlog, setErrorMessage }) => {
+const Blog = ({ blog, updateBlog, removeBlog, setErrorMessage, user, name }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
     setVisible(!visible)
+  }
+
+  const removeBlogConfirm = async (event) => {
+    if (window.confirm(`Do you want to remove ${blog.title} by ${blog.author}`)) { 
+      const response = await removeBlog({
+        _id: blog.id
+      })
+    }
+    return null
   }
 
   const voteBlog = async (event) => {
@@ -38,7 +47,27 @@ const Blog = ({ blog, updateBlog, setErrorMessage }) => {
     marginBottom: 1
   }
 
-  if (visible) {
+  if (visible && name === blog.user.name) {
+    return (
+      <div style={blogStyle}>
+        <div>
+          {blog.title} {blog.author} <button onClick={toggleVisibility}>Hide</button>
+          <div>
+            {blog.blogUrl}
+          </div>
+          <div>
+            Votes: {blog.votes} <button onClick={voteBlog}>Like</button>
+          </div>
+          <div>
+            {blog.user.name}
+          </div>
+          <div>
+            <button onClick={removeBlogConfirm}>Remove</button>
+          </div>
+        </div>
+      </div>
+    )
+  } else if (visible && name != blog.user.name) {
     return (
       <div style={blogStyle}>
         <div>
@@ -55,7 +84,8 @@ const Blog = ({ blog, updateBlog, setErrorMessage }) => {
         </div>
       </div>
     )
-  } else {
+  }
+  else {
     return (
       <div style={blogStyle}>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>Show</button>
