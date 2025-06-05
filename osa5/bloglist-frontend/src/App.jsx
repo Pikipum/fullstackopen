@@ -29,7 +29,7 @@ const BlogView = (props) => {
   return (
     <div>
       {props.blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={props.updateBlog} setErrorMessage={props.setErrorMessage} />
       )}
     </div>
   )
@@ -59,7 +59,7 @@ const LoginScreen = (props) => {
           setErrorMessage={props.setErrorMessage}
         />
       </Togglable>
-      <BlogView blogs={props.blogs} />
+      <BlogView blogs={props.blogs} updateBlog={props.updateBlog} setErrorMessage={props.setErrorMessage} />
     </div>
   )
 }
@@ -129,6 +129,12 @@ const App = () => {
     return response
   }
 
+  const updateBlog = async (blogObject) => {
+    const response = await blogService.put(blogObject._id, blogObject, user)
+    const updatedBlogs = await blogService.getAll()
+    setBlogs(updatedBlogs)
+    return response
+  }
 
   const handleNameFieldChange = (event) => {
     setNewUserName(event.target.value)
@@ -167,6 +173,7 @@ const App = () => {
         handleLogout={handleLogout}
         blogFormRef={blogFormRef}
         addBlog={addBlog}
+        updateBlog={updateBlog}
         setErrorMessage={setErrorMessage}
       />
     </div>

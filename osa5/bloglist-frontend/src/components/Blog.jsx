@@ -1,10 +1,33 @@
 import { useState } from "react"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlog, setErrorMessage }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
     setVisible(!visible)
+  }
+
+  const voteBlog = async (event) => {
+    event.preventDefault()
+    try {
+      const response = await updateBlog({
+        _id: blog.id,
+        title: blog.title,
+        author: blog.author,
+        blogUrl: blog.blogUrl,
+        votes: blog.votes + 1,
+        voteUpdate: true
+      }
+      )
+
+      console.log(response)
+      setErrorMessage(`You liked "${blog.title}"`)
+      setTimeout(() => setErrorMessage(null), 5000)
+    } catch (error) {
+      console.log(error)
+      setErrorMessage('Could not submit like.', error)
+      setTimeout(() => setErrorMessage(null), 5000)
+    }
   }
 
   const blogStyle = {
@@ -24,7 +47,10 @@ const Blog = ({ blog }) => {
             {blog.blogUrl}
           </div>
           <div>
-            Votes: {blog.votes} <button>Like</button>
+            Votes: {blog.votes} <button onClick={voteBlog}>Like</button>
+          </div>
+          <div>
+            {blog.user.name}
           </div>
         </div>
       </div>
