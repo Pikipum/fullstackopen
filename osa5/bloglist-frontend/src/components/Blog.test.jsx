@@ -1,40 +1,44 @@
 import { render, screen } from '@testing-library/react'
 import Blog from './Blog'
-import { expect } from 'vitest'
-
-test('renders content', () => {
-    const blog = {
-        id: 'aksd903jgfjae2',
-        title: 'Test title',
-        author: 'John Tester',
-        blogUrl: 'testing.com',
-        votes: 9
-    }
-
-    //render(<Blog blog={blog} />)
-
-    const { container } = render(<Blog blog={blog} />)
-
-    const div = container.querySelector('.blog')
-
-    screen.debug(div)
-    
-    expect(div).toHaveTextContent(
-        blog.title
-    )
-    expect(div).toHaveTextContent(
-        blog.author
-    )
-    expect(div).not.toHaveTextContent(
-        blog.blogUrl
-    )
-    expect(div).not.toHaveTextContent(
-        blog.votes
-    )
+import { beforeEach, describe, expect } from 'vitest'
 
 
-    //const element = screen.getByText(blog.title, blog.author)
+describe('rendering blogs', () => {
+    let container
 
+    beforeEach(() => {
+        const blog = {
+            id: 'aksd903jgfjae2',
+            title: 'Test title',
+            author: 'John Tester',
+            blogUrl: 'testing.com',
+            votes: 9
+        }
+        container = render(<Blog blog={blog} />).container
+    })
 
-    //expect(element).toBeDefined()
+    test('renders title', () => {
+        const div = container.querySelector('.blog')
+        expect(div).toHaveTextContent(
+            'Test title'
+        )
+    })
+    test('renders author', () => {
+        const div = container.querySelector('.blog')
+        expect(div).toHaveTextContent(
+            'John Tester'
+        )
+    })
+    test('doesnt render url', () => {
+        const div = container.querySelector('.blog')
+        expect(div).not.toHaveTextContent(
+            'testing.com'
+        )
+    })
+    test('doesnt render votes', () => {
+        const div = container.querySelector('.blog')
+        expect(div).not.toHaveTextContent(
+            9
+        )
+    })
 })
