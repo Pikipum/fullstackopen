@@ -50,7 +50,7 @@ const Blog = ({ blog, updateBlog, removeBlog, setErrorMessage, user, name }) => 
 
     if (visible && name === blog.user.name) {
         return (
-            <div style={blogStyle}>
+            <div className="blog" style={blogStyle}>
                 <div>
                     {blog.title} {blog.author} <button onClick={toggleVisibility}>Hide</button>
                     <div>
@@ -70,7 +70,7 @@ const Blog = ({ blog, updateBlog, removeBlog, setErrorMessage, user, name }) => 
         )
     } else if (visible && name !== blog.user.name) {
         return (
-            <div style={blogStyle}>
+            <div className="blog" style={blogStyle}>
                 <div>
                     {blog.title} {blog.author} <button onClick={toggleVisibility}>Hide</button>
                     <div>
@@ -88,7 +88,7 @@ const Blog = ({ blog, updateBlog, removeBlog, setErrorMessage, user, name }) => 
     }
     else {
         return (
-            <div style={blogStyle}>
+            <div className="blog" style={blogStyle}>
                 {blog.title} {blog.author} <button onClick={toggleVisibility}>Show</button>
             </div>
         )
