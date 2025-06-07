@@ -88,3 +88,40 @@ describe('button pressed', async () => {
         )
     })
 })
+describe('pressing vote button', async () => {
+    let container
+    let mockUpdate
+
+    beforeEach(() => {
+        const blog = {
+            id: 'aksd903jgfjae2',
+            title: 'Test title',
+            author: 'John Tester',
+            blogUrl: 'testing.com',
+            votes: 965,
+            user: {
+                name: 'John Blogger'
+            }
+        }
+        mockUpdate = vi.fn()
+        const mockHandler = vi.fn()
+        const mockRemove = vi.fn()
+        const mockSetErrorMessage = vi.fn()
+        container = render(<Blog blog={blog}
+            toggleVisibility={mockHandler}
+            updateBlog={mockUpdate}
+            removeBlog={mockRemove}
+            setErrorMessage={mockSetErrorMessage}
+        />).container
+    })
+    test('like button pressed twice results in two function calls', async () => {
+        const user = userEvent.setup()
+        const button = screen.getByText('Show')
+        await user.click(button)
+        const voteButton = screen.getByText('Like')
+        await user.click(voteButton)
+        await user.click(voteButton)
+
+        expect(mockUpdate).toHaveBeenCalledTimes(2)
+    })
+})
