@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import CreateBlogForm from './CreateBlogForm'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 describe('rendering blogs', () => {
@@ -123,5 +124,36 @@ describe('pressing vote button', async () => {
         await user.click(voteButton)
 
         expect(mockUpdate).toHaveBeenCalledTimes(2)
+    })
+})
+describe('submitting forms', async () => {
+    let container
+    let mockAddBlog
+
+    beforeEach(() => {
+        mockAddBlog = vi.fn()
+        const mockRef = vi.fn()
+        const mockSetErrorMessage = vi.fn()
+        container = render(<CreateBlogForm
+            addBlog={mockAddBlog}
+            blogFormRef={mockRef}
+            setErrorMessage={mockSetErrorMessage}
+        />).container
+    })
+    test('submitting blog has correct fields', async () => {
+        const title = container.querySelector('#title-input')
+        const author = container.querySelector('#author-input')
+        const url = container.querySelector('#url-input')
+        const button = screen.getByText('Create')
+
+        await userEvent.type(title, 'testing blogs part 23893')
+        await userEvent.type(author, 'John Tester')
+        await userEvent.type(url, 'testingwithvitest.com')
+        await userEvent.click(button)
+
+        expect(mockAddBlog.mock.calls).toHaveLength(1)
+        expect(mockAddBlog.mock.calls[0][0].title).toBe('testing blogs part 23893')
+        expect(mockAddBlog.mock.calls[0][0].author).toBe('John Tester')
+        expect(mockAddBlog.mock.calls[0][0].blogUrl).toBe('testingwithvitest.com')
     })
 })

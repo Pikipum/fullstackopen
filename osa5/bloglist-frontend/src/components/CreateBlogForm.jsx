@@ -28,12 +28,12 @@ const CreateBlogForm = ({ addBlog, blogFormRef, setErrorMessage }) => {
     }
 
     return (
-        <div>
+        <div className="blogDiv">
             <h2>Create new blog</h2>
             <form onSubmit={handleSubmit}>
-                <div>Title: <input name="title" value={newTitle} onChange={e => setNewTitle(e.target.value)} /></div>
-                <div>Author: <input name="author" value={newAuthor} onChange={e => setNewAuthor(e.target.value)} /></div>
-                <div>URL: <input name="blogUrl" value={newUrl} onChange={e => setNewUrl(e.target.value)} /></div>
+                <div>Title: <input name="title" value={newTitle} placeholder='blog title' id='title-input' onChange={e => setNewTitle(e.target.value)} /></div>
+                <div>Author: <input name="author" value={newAuthor} placeholder='author name' id='author-input' onChange={e => setNewAuthor(e.target.value)} /></div>
+                <div>URL: <input name="blogUrl" value={newUrl} placeholder='blog url' id='url-input' onChange={e => setNewUrl(e.target.value)} /></div>
                 <button type='submit'>Create</button>
             </form>
         </div>
