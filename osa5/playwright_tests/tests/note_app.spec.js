@@ -10,6 +10,13 @@ describe('Blog app', () => {
         password: 'password123'
       }
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'JBlogger',
+        username: 'jb11',
+        password: 'password12345'
+      }
+    })
 
     await page.goto('http://localhost:5173')
   })
@@ -85,6 +92,19 @@ describe('Blog app', () => {
         })
         await blog.getByRole('button', { name: 'Remove' }).click()
         await expect(page.getByText('Testing blogs part 3 John')).not.toBeAttached()
+      })
+      
+      test('only owner sees remove button', async ({ page }) => {
+        await page.getByRole('button', { name: 'Log out' }).click()
+        await page.locator('input[name="username"]').fill('jb11')
+        await page.locator('input[name="password"]').fill('password12345')
+        await page.getByRole('button', { name: 'Login' }).click()
+
+        const blog = page.locator('.blog')
+          .filter({ hasText: "Testing blogs part 3" })
+
+        await blog.getByRole('button', { name: 'Show' }).click()
+        await expect(blog.getByRole('button', { name: 'Remove' })).not.toBeVisible()
       })
     })
   })
