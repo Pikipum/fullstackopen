@@ -34,4 +34,27 @@ describe('Blog app', () => {
       await expect(page.getByText('Wrong username or password.')).toBeVisible()
     })
   })
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await page.locator('input[name="username"]').fill('juser1337')
+      await page.locator('input[name="password"]').fill('password123')
+      await page.getByRole('button', { name: 'Login' }).click()
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await page.getByRole('button', { name: 'Create blog' }).click()
+      await page.locator('input[id="title-input"]').fill('Testing Blogs part 2')
+      await page.locator('input[id="author-input"]').fill('John Tester')
+      await page.locator('input[id="url-input"]').fill('testing.com')
+      await page.getByRole('button', { name: 'Create' }).click()
+      await expect(page.getByText('Blog "Testing Blogs part 2" submitted successfully!')).toBeVisible()
+
+      const blogs = page.locator('.blog')
+      const count = await blogs.count()
+      const lastBlog = blogs.nth(count - 1)
+      await expect(lastBlog).toContainText('Testing Blogs part 2')
+      await expect(lastBlog).toContainText('John Tester')
+    })
+  })
 })
+
