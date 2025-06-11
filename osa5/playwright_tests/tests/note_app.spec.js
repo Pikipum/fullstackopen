@@ -93,7 +93,7 @@ describe('Blog app', () => {
         await blog.getByRole('button', { name: 'Remove' }).click()
         await expect(page.getByText('Testing blogs part 3 John')).not.toBeAttached()
       })
-      
+
       test('only owner sees remove button', async ({ page }) => {
         await page.getByRole('button', { name: 'Log out' }).click()
         await page.locator('input[name="username"]').fill('jb11')
@@ -105,6 +105,35 @@ describe('Blog app', () => {
 
         await blog.getByRole('button', { name: 'Show' }).click()
         await expect(blog.getByRole('button', { name: 'Remove' })).not.toBeVisible()
+      })
+      test('blogs are ordered by vote count', async ({ page }) => {
+        await page.getByRole('button', { name: 'Create blog' }).click()
+        await page.locator('input[id="title-input"]').fill('Testblog 1')
+        await page.locator('input[id="author-input"]').fill('John Tester')
+        await page.locator('input[id="url-input"]').fill('testing.com')
+        await page.getByRole('button', { name: 'Create' }).click()
+
+        await page.getByRole('button', { name: 'Create blog' }).click()
+        await page.locator('input[id="title-input"]').fill('Testblog 2')
+        await page.locator('input[id="author-input"]').fill('John Tester')
+        await page.locator('input[id="url-input"]').fill('testing.com')
+        await page.getByRole('button', { name: 'Create' }).click()
+
+        await page.getByRole('button', { name: 'Create blog' }).click()
+        await page.locator('input[id="title-input"]').fill('Testblog 3')
+        await page.locator('input[id="author-input"]').fill('John Tester')
+        await page.locator('input[id="url-input"]').fill('testing.com')
+        await page.getByRole('button', { name: 'Create' }).click()
+
+        const blog = page.locator('.blog')
+          .filter({ hasText: "Testblog 3" })
+
+        await blog.getByRole('button', { name: 'Show' }).click()
+        await blog.getByRole('button', { name: 'Like' }).click()
+
+        const firstInList = page.locator('.blog').nth(0)
+
+        await expect(firstInList).toContainText('Testblog 3')
       })
     })
   })
