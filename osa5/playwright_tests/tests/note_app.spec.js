@@ -55,6 +55,26 @@ describe('Blog app', () => {
       await expect(lastBlog).toContainText('Testing Blogs part 2')
       await expect(lastBlog).toContainText('John Tester')
     })
+    describe('Logged in and one blog created', () => {
+      beforeEach(async ({ page }) => {
+        await page.getByRole('button', { name: 'Create blog' }).click()
+        await page.locator('input[id="title-input"]').fill('Testing blogs part 3')
+        await page.locator('input[id="author-input"]').fill('John Tester')
+        await page.locator('input[id="url-input"]').fill('testing.com')
+        await page.getByRole('button', { name: 'Create' }).click()
+      })
+      test('a blog can be liked', async ({ page }) => {
+        const blog = page.locator('.blog')
+        .filter({ hasText: "Testing blogs part 3"})
+
+        blog.getByRole('button', { name: 'Show'}).click()
+        blog.getByRole('button', { name: 'Like'}).click()
+
+        await expect(page.getByText('You liked "Testing blogs part 3"')).toBeVisible()
+        await expect(page.getByText('Votes: 1')).toBeVisible()
+  
+      })
+    })
   })
 })
 
