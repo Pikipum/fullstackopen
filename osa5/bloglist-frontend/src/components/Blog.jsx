@@ -48,7 +48,7 @@ const Blog = ({ blog, updateBlog, removeBlog, setErrorMessage, user, name }) => 
         marginBottom: 1
     }
 
-    if (visible && name === blog.user.name) {
+    if (visible && blog.user && name === blog.user.name) {
         return (
             <div className="blog" style={blogStyle}>
                 <div>
@@ -68,7 +68,7 @@ const Blog = ({ blog, updateBlog, removeBlog, setErrorMessage, user, name }) => 
                 </div>
             </div>
         )
-    } else if (visible && name !== blog.user.name) {
+    } else if (visible && blog.user && name !== blog.user.name) {
         return (
             <div className="blog" style={blogStyle}>
                 <div>

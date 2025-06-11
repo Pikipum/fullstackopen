@@ -59,20 +59,32 @@ describe('Blog app', () => {
       beforeEach(async ({ page }) => {
         await page.getByRole('button', { name: 'Create blog' }).click()
         await page.locator('input[id="title-input"]').fill('Testing blogs part 3')
-        await page.locator('input[id="author-input"]').fill('John Tester')
+        await page.locator('input[id="author-input"]').fill('John User')
         await page.locator('input[id="url-input"]').fill('testing.com')
         await page.getByRole('button', { name: 'Create' }).click()
       })
       test('a blog can be liked', async ({ page }) => {
         const blog = page.locator('.blog')
-        .filter({ hasText: "Testing blogs part 3"})
+          .filter({ hasText: "Testing blogs part 3" })
 
-        blog.getByRole('button', { name: 'Show'}).click()
-        blog.getByRole('button', { name: 'Like'}).click()
+        await blog.getByRole('button', { name: 'Show' }).click()
+        await blog.getByRole('button', { name: 'Like' }).click()
 
         await expect(page.getByText('You liked "Testing blogs part 3"')).toBeVisible()
         await expect(page.getByText('Votes: 1')).toBeVisible()
-  
+
+      })
+      test('a blog can be removed', async ({ page }) => {
+        const blog = page.locator('.blog')
+          .filter({ hasText: "Testing blogs part 3" })
+
+        await blog.getByRole('button', { name: 'Show' }).click()
+        await expect(blog.getByRole('button', { name: 'Remove' })).toBeVisible()
+        page.on('dialog', async dialog => {
+          await dialog.accept()
+        })
+        await blog.getByRole('button', { name: 'Remove' }).click()
+        await expect(page.getByText('Testing blogs part 3 John')).not.toBeAttached()
       })
     })
   })
