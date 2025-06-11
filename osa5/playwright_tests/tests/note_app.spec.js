@@ -5,9 +5,9 @@ describe('Blog app', () => {
     await request.post('http://localhost:3003/api/testing/reset')
     await request.post('http://localhost:3003/api/users', {
       data: {
-        name: 'Matti Luukkainen',
-        username: 'mluukkai',
-        password: 'salainen'
+        name: 'John User',
+        username: 'juser1337',
+        password: 'password123'
       }
     })
 
