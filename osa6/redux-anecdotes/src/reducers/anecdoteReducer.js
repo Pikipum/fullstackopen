@@ -30,7 +30,8 @@ const reducer = (state = initialState, action) => {
           ? { ...anecdote, votes: anecdote.votes + 1 }
           : anecdote
       )
-    case 'ADD': return state.concat(asObject(action.payload))
+    case 'ADD': 
+        return state.concat(asObject(action.payload))
     default: return state
   }
 }
