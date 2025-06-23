@@ -5,8 +5,9 @@ const AnecdoteForm = () => {
     const dispatch = useDispatch()
     
     const addNewAnecdote = (event) => {
+        event.preventDefault()
         console.log(event)
-        dispatch(addAnecdote(event))
+        dispatch(addAnecdote(event.target.newAnecdote.value))
     }
     return (
         <div>
