@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 //import { getAll } from '../services/anecdotes'
 import axios from "axios"
 import anecdoteService from '../services/anecdotes'
-
+/*
 const getId = () => (100000 * Math.random()).toFixed(0)
 
 const asObject = (anecdote) => {
@@ -12,6 +12,7 @@ const asObject = (anecdote) => {
     votes: 0
   }
 }
+  */
 
 //const initialState = anecdotesAtStart.map(asObject)
 
@@ -30,8 +31,7 @@ const anecdoteSlice = createSlice({
 
     },
     addAnecdote(state, action) {
-      const response = anecdoteService.addNew(asObject(action.payload))
-      state.push(asObject(action.payload))
+      state.push(action.payload)
     },
     setAnecdotes(state, action) {
       return action.payload
