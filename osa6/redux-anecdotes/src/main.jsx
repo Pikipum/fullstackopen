@@ -8,12 +8,6 @@ import { setAnecdotes } from './reducers/anecdoteReducer'
 
 const store = reduxstore
 
-/*
-
-anecdoteService.getAll().then(anecdotes =>
-  store.dispatch(setAnecdotes(anecdotes))
-)
-  */
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <App />
