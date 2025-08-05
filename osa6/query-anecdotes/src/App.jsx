@@ -5,8 +5,7 @@ import axios from 'axios'
 import { getAnecdotes, createAnecdote } from './requests'
 
 const App = () => {
-  const newAnecdoteMutation = useMutation({ mutationFn: createAnecdote })
-
+  
   const handleVote = (anecdote) => {
     console.log('vote')
   }
