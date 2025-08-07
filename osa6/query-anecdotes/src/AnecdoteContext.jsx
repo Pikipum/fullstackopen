@@ -8,6 +8,8 @@ const notificationReducer = (state, action) => {
             return `Anecdote ${action.payload} added`
         case "CLEAR":
             return ''
+        case "ERROR_SHORT":
+            return `Anecdote too short, must have length 5 or more`
         default:
             return state
     }
