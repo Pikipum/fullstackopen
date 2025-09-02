@@ -91,24 +91,20 @@ const LoginScreen = (props) => {
 }
 
 const App = () => {
-	const [blogs, setBlogs] = useState([])
 	const [user, setUser] = useState(null)
 	const [name, setName] = useState(null)
 	const [newUserName, setNewUserName] = useState('')
 	const [newPassword, setNewPassword] = useState('')
 	const [, dispatchNotification] = useNotification()
-
 	const blogFormRef = useRef()
 	const queryClient = useQueryClient()
 
-	useEffect(() => {
-		blogService
-			.getAll()
-			.then((blogs) => {
-				blogs.sort((a, b) => b.votes - a.votes)
-				setBlogs(blogs)
-			})
-			.catch((error) => {
+	const { data: blogs = [], isLoading } = useQuery(
+		'blogs',
+		blogService.getAll,
+		{
+			select: (data) => [...data].sort((a, b) => b.votes - a.votes),
+			onError: (error) => {
 				dispatchNotification({
 					type: 'SHOW',
 					payload: 'Could not retrieve blogs',
@@ -117,8 +113,33 @@ const App = () => {
 				setTimeout(() => {
 					dispatchNotification({ type: 'CLEAR' })
 				}, 5000)
-			})
-	}, [])
+			},
+		},
+	)
+	const addBlogMutation = useMutation(
+		(blogObject) => blogService.post(blogObject, user),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('blogs')
+			},
+		},
+	)
+	const updateBlogMutation = useMutation(
+		(blogObject) => blogService.put(blogObject._id, blogObject, user),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('blogs')
+			},
+		},
+	)
+	const removeBlogMutation = useMutation(
+		(blogObject) => blogService.deleteBlog(blogObject._id, user),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('blogs')
+			},
+		},
+	)
 
 	useEffect(() => {
 		setUser(window.localStorage.getItem('user'))
@@ -138,13 +159,19 @@ const App = () => {
 			window.localStorage.setItem('user', response.data.token)
 			window.localStorage.setItem('name', response.data.name)
 
-			dispatchNotification({ type: 'SHOW', payload: `Login succesful, logged in as ${response.data.name}.`})
+			dispatchNotification({
+				type: 'SHOW',
+				payload: `Login succesful, logged in as ${response.data.name}.`,
+			})
 			setTimeout(() => {
 				dispatchNotification({ type: 'CLEAR' })
 			}, 5000)
 		} catch (error) {
 			console.log('login failed', error)
-			dispatchNotification({ type: 'SHOW', payload: 'Wrong username or password.'})
+			dispatchNotification({
+				type: 'SHOW',
+				payload: 'Wrong username or password.',
+			})
 			setTimeout(() => {
 				dispatchNotification({ type: 'CLEAR' })
 			}, 5000)
@@ -152,25 +179,15 @@ const App = () => {
 	}
 
 	const addBlog = async (blogObject) => {
-		const response = await blogService.post(blogObject, user)
-		setBlogs(blogs.concat(response))
-		return response
+		return addBlogMutation.mutateAsync(blogObject)
 	}
 
 	const updateBlog = async (blogObject) => {
-		const response = await blogService.put(blogObject._id, blogObject, user)
-		const updatedBlogs = await blogService.getAll()
-		updatedBlogs.sort((a, b) => b.votes - a.votes)
-		setBlogs(updatedBlogs)
-		return response
+		return updateBlogMutation.mutateAsync(blogObject)
 	}
 
 	const removeBlog = async (blogObject) => {
-		const response = await blogService.deleteBlog(blogObject._id, user)
-		const updatedBlogs = await blogService.getAll()
-		updatedBlogs.sort((a, b) => b.votes - a.votes)
-		setBlogs(updatedBlogs)
-		return response
+		return removeBlogMutation.mutateAsync(blogObject)
 	}
 
 	const handleNameFieldChange = (event) => {
@@ -187,7 +204,7 @@ const App = () => {
 		setUser(null)
 		setName(null)
 
-		dispatchNotification({ type: 'SHOW', payload: 'Log out succesful.'})
+		dispatchNotification({ type: 'SHOW', payload: 'Log out succesful.' })
 		setTimeout(() => {
 			dispatchNotification({ type: 'CLEAR' })
 		}, 5000)
