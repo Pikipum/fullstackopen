@@ -140,42 +140,47 @@ const App = () => {
 			},
 		},
 	)
+	const loginMutation = useMutation(
+		({ username, password }) => loginService.login({ username, password }),
+		{
+			onSuccess: (response) => {
+				setUser(response.data.token)
+				setName(response.data.name)
+				window.localStorage.setItem('user', response.data.token)
+				window.localStorage.setItem('name', response.data.name)
+				dispatchNotification({
+					type: 'SHOW',
+					payload: `Login successful, logged in as ${response.data.name}.`,
+				})
+				setTimeout(() => {
+					dispatchNotification({ type: 'CLEAR' })
+				}, 5000)
+			},
+			onError: () => {
+				dispatchNotification({
+					type: 'SHOW',
+					payload: 'Wrong username or password.',
+				})
+				setTimeout(() => {
+					dispatchNotification({ type: 'CLEAR' })
+				}, 5000)
+			},
+		},
+	)
+	const handleLogout = (event) => {
+		window.localStorage.removeItem('user')
+		window.localStorage.removeItem('name')
+		setUser(null)
+		setName(null)
 
-	useEffect(() => {
-		setUser(window.localStorage.getItem('user'))
-		setName(window.localStorage.getItem('name'))
-	}, [])
-
-	const handleLoginSubmission = async (event) => {
+		dispatchNotification({ type: 'SHOW', payload: 'Log out succesful.' })
+		setTimeout(() => {
+			dispatchNotification({ type: 'CLEAR' })
+		}, 5000)
+	}
+	const handleLoginSubmission = (event) => {
 		event.preventDefault()
-		try {
-			const response = await loginService.login({
-				username: newUserName,
-				password: newPassword,
-			})
-			console.log(response)
-			setUser(response.data.token)
-			setName(response.data.name)
-			window.localStorage.setItem('user', response.data.token)
-			window.localStorage.setItem('name', response.data.name)
-
-			dispatchNotification({
-				type: 'SHOW',
-				payload: `Login succesful, logged in as ${response.data.name}.`,
-			})
-			setTimeout(() => {
-				dispatchNotification({ type: 'CLEAR' })
-			}, 5000)
-		} catch (error) {
-			console.log('login failed', error)
-			dispatchNotification({
-				type: 'SHOW',
-				payload: 'Wrong username or password.',
-			})
-			setTimeout(() => {
-				dispatchNotification({ type: 'CLEAR' })
-			}, 5000)
-		}
+		loginMutation.mutate({ username: newUserName, password: newPassword })
 	}
 
 	const addBlog = async (blogObject) => {
@@ -197,17 +202,6 @@ const App = () => {
 	const handlePasswordFieldChange = (event) => {
 		setNewPassword(event.target.value)
 		console.log(event.target.value)
-	}
-	const handleLogout = (event) => {
-		window.localStorage.removeItem('user')
-		window.localStorage.removeItem('name')
-		setUser(null)
-		setName(null)
-
-		dispatchNotification({ type: 'SHOW', payload: 'Log out succesful.' })
-		setTimeout(() => {
-			dispatchNotification({ type: 'CLEAR' })
-		}, 5000)
 	}
 
 	return (
