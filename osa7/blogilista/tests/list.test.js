@@ -1,6 +1,6 @@
-const { test, describe } = require('node:test');
-const assert = require('node:assert');
-const listHelper = require('../utils/list_helper');
+const { test, describe } = require('node:test')
+const assert = require('node:assert')
+const listHelper = require('../utils/list_helper')
 
 const blogs = [
 	{
@@ -56,32 +56,32 @@ const blogs = [
 		votes: 2,
 		__v: 0,
 	},
-];
+]
 
 describe('total votes', () => {
 	test('test total amount of votes in list', () => {
-		const result = listHelper.totalVotes(blogs);
-		assert.strictEqual(result, 36);
-	});
-});
+		const result = listHelper.totalVotes(blogs)
+		assert.strictEqual(result, 36)
+	})
+})
 
 describe('blog with most votes', () => {
 	test('test blog with most votes', () => {
-		const result = listHelper.favoriteBlog(blogs);
-		assert.strictEqual(result, blogs[2]);
-	});
-});
+		const result = listHelper.favoriteBlog(blogs)
+		assert.strictEqual(result, blogs[2])
+	})
+})
 
 describe('author with most blogs', () => {
 	test('test author with the most blogs', () => {
-		const result = listHelper.mostBlogs(blogs);
-		assert.strictEqual(result.author, 'Robert C. Martin');
-	});
-});
+		const result = listHelper.mostBlogs(blogs)
+		assert.strictEqual(result.author, 'Robert C. Martin')
+	})
+})
 
 describe('author with most votes', () => {
 	test('test author with the most votes', () => {
-		const result = listHelper.mostVotes(blogs);
-		assert.strictEqual(result.author, 'Edsger W. Dijkstra');
-	});
-});
+		const result = listHelper.mostVotes(blogs)
+		assert.strictEqual(result.author, 'Edsger W. Dijkstra')
+	})
+})

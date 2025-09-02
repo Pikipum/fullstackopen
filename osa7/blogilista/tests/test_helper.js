@@ -1,10 +1,10 @@
-const User = require('../models/user');
+const User = require('../models/user')
 
 // Example valid Mongoose ObjectIds for users:
 
-const userId1 = '60d21b4667d0d8992e610c85';
-const userId2 = '60d21b4967d0d8992e610c86';
-const userId3 = '60d21b4b67d0d8992e610c87';
+const userId1 = '60d21b4667d0d8992e610c85'
+const userId2 = '60d21b4967d0d8992e610c86'
+const userId3 = '60d21b4b67d0d8992e610c87'
 
 //const johnsToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG5Vc2VyMTMzNyIsImlkIjoiNjgzOWEwMWE2YTJmMzUyYTQzYzI0MDNkIiwiaWF0IjoxNzQ4NjA3MDEyfQ.f5xp1YP7u5sdSe5p7le_PnIrqDf8SL77pwJGtxbUBuE"
 
@@ -68,7 +68,7 @@ const initialBlogs = [
 		user: userId3,
 		__v: 0,
 	},
-];
+]
 
 const initialUsers = [
 	{
@@ -95,7 +95,7 @@ const initialUsers = [
 		blogs: [],
 		__v: 0,
 	},
-];
+]
 /*
 const testBlog = {
     'id': "1234567789",
@@ -115,19 +115,19 @@ const testBlog = {
 	votes: 7,
 	user: '60d21b4667d0d8992e610c85',
 	__v: 0,
-};
+}
 
 const testBlog2 = {
 	title: 'Testing API',
 	author: 'John Tester',
 	blogUrl: 'https://testingstuff.com/',
 	votes: 7,
-};
+}
 
 const usersInDb = async () => {
-	const users = await User.find({});
-	return users.map((u) => u.toJSON());
-};
+	const users = await User.find({})
+	return users.map((u) => u.toJSON())
+}
 
 const blogWithNoVotes = {
 	title: 'Testing API',
@@ -135,7 +135,7 @@ const blogWithNoVotes = {
 	blogUrl: 'https://testingstuff.com/',
 	user: '60d21b4667d0d8992e610c85',
 	__v: 0,
-};
+}
 
 const blogWithNoTitle = {
 	id: '22222222222',
@@ -144,7 +144,7 @@ const blogWithNoTitle = {
 	votes: 7,
 	user: '60d21b4667d0d8992e610c85',
 	__v: 0,
-};
+}
 
 const blogWithNoUrl = {
 	id: '11111111111',
@@ -153,7 +153,7 @@ const blogWithNoUrl = {
 	votes: 7,
 	user: '60d21b4667d0d8992e610c85',
 	__v: 0,
-};
+}
 
 const updatedBlog = {
 	_id: '5a422b3a1b54a676234d17f9',
@@ -163,11 +163,11 @@ const updatedBlog = {
 	votes: 200,
 	user: '60d21b4667d0d8992e610c85',
 	__v: 0,
-};
+}
 const testUser = {
 	username: 'JohnUser1337',
 	password: 'password123',
-};
+}
 
 module.exports = {
 	initialBlogs,
@@ -180,4 +180,4 @@ module.exports = {
 	initialUsers,
 	testUser,
 	testBlog2,
-};
+}
