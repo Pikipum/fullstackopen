@@ -11,8 +11,11 @@ export const ALL_AUTHORS = gql`
 `;
 
 export const ALL_BOOKS = gql`
-    query {
-    null
+  query {
+    allBooks {
+      author
+      published
+      title
     }
-`
-
+  }
+`;
