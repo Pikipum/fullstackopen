@@ -1,7 +1,27 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
+const { GraphQLError } = require("graphql");
+const jwt = require("jsonwebtoken");
 
 const { v1: uuid } = require("uuid");
+
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+const Author = require("./models/author");
+const Book = require("./models/book");
+
+require("dotenv").config();
+
+const MONGODB_URI = process.env.MONGODB_URI;
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log("connected to MongoDB");
+  })
+  .catch((error) => {
+    console.log("error connection to MongoDB:", error.message);
+  });
 
 let authors = [
   {
@@ -28,20 +48,6 @@ let authors = [
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
 ];
-
-/*
- * Suomi:
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
- *
- * English:
- * It might make more sense to associate a book with its author by storing the author's id in the context of the book instead of the author's name
- * However, for simplicity, we will store the author's name in connection with the book
- *
- * Spanish:
- * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
- * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conexión con el libro
- */
 
 let books = [
   {
@@ -95,21 +101,19 @@ let books = [
   },
 ];
 
-/*
-  you can remove the placeholder query once your first one has been implemented 
-*/
-
 const typeDefs = `
   type Author {
     name: String!
     bookCount: Int!
     born: Int
+    id: ID!
   }
   type Book {
     title: String!
     published: Int!
     author: String!
     genres: [String!]!
+    id: ID!
   }
   type Query {
     authorCount: Int!
@@ -136,6 +140,14 @@ const resolvers = {
     addBook: (root, args) => {
       const book = { ...args, id: uuid() };
       books = books.concat(book);
+
+      if (!authors.find((a) => a.name === args.author)) {
+        authors = authors.concat({
+          name: args.author,
+          id: uuid(),
+        });
+      }
+
       return book;
     },
     editAuthor: (root, args) => {
@@ -144,15 +156,15 @@ const resolvers = {
         return null;
       }
       const updatedAuthor = { ...author, born: args.setBornTo };
-      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
+      authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a));
 
-      return updatedAuthor
+      return updatedAuthor;
     },
   },
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
+    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: async () => Author.collection.countDocuments(),
+    allBooks: async (root, args) => {
       let filteredBooks = books;
 
       if (args.author) {
@@ -166,9 +178,11 @@ const resolvers = {
         );
       }
 
-      return filteredBooks;
+      //return filteredBooks;
+      return Book.find({});
     },
-    allAuthors: () => authors,
+    //allAuthors: () => authors,
+    allAuthors: async () => Author.find({}),
   },
   Author: {
     bookCount: (root) => books.filter((b) => b.author === root.name).length,
@@ -183,5 +197,7 @@ const server = new ApolloServer({
 startStandaloneServer(server, {
   listen: { port: 4000 },
 }).then(({ url }) => {
+  Book.insertMany(books);
+  Author.insertMany(authors);
   console.log(`Server ready at ${url}`);
 });
