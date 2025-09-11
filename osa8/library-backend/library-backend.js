@@ -138,6 +138,17 @@ const typeDefs = `
 const resolvers = {
   Mutation: {
     addBook: async (root, args) => {
+      if (args.author.length < 5) {
+        throw new GraphQLError("Author name must be longer than 5 characters");
+      }
+      if (args.title.length < 3) {
+        throw new GraphQLError("Book title must be longer than 3 characters");
+      }
+      if (args.published > 2025) {
+        throw new GraphQLError(
+          "Can't add unpublished book"
+        );
+      }
       const book = new Book({ ...args, id: uuid() });
 
       if (!(await Author.findOne({ name: args.author }))) {
@@ -147,6 +158,9 @@ const resolvers = {
       return book.save();
     },
     editAuthor: async (root, args) => {
+      if (args.setBornTo > 2025) {
+        throw new GraphQLError("Author born date must be before 2025");
+      }
       const author = await Author.findOne({ name: args.name });
 
       if (!author) {
@@ -164,7 +178,7 @@ const resolvers = {
         return await Book.find({ author: args.author });
       }
       if (args.genre) {
-        return await Book.find({ genres: args.genre })
+        return await Book.find({ genres: args.genre });
       }
 
       return Book.find({});
