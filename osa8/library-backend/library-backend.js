@@ -137,55 +137,45 @@ const typeDefs = `
 
 const resolvers = {
   Mutation: {
-    addBook: (root, args) => {
-      const book = { ...args, id: uuid() };
-      books = books.concat(book);
+    addBook: async (root, args) => {
+      const book = new Book({ ...args, id: uuid() });
 
-      if (!authors.find((a) => a.name === args.author)) {
-        authors = authors.concat({
-          name: args.author,
-          id: uuid(),
-        });
+      if (!(await Author.findOne({ name: args.author }))) {
+        const author = new Author({ name: args.author, id: uuid() });
+        author.save();
       }
-
-      return book;
+      return book.save();
     },
-    editAuthor: (root, args) => {
-      const author = authors.find((a) => a.name === args.name);
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name });
+
       if (!author) {
         return null;
       }
-      const updatedAuthor = { ...author, born: args.setBornTo };
-      authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a));
-
-      return updatedAuthor;
+      author.born = args.setBornTo;
+      return author.save();
     },
   },
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      let filteredBooks = books;
-
       if (args.author) {
-        filteredBooks = filteredBooks.filter(
-          (book) => book.author === args.author
-        );
+        return await Book.find({ author: args.author });
       }
       if (args.genre) {
-        filteredBooks = filteredBooks.filter((book) =>
-          book.genres.includes(args.genre)
-        );
+        return await Book.find({ genres: args.genre })
       }
 
-      //return filteredBooks;
       return Book.find({});
     },
-    //allAuthors: () => authors,
     allAuthors: async () => Author.find({}),
   },
   Author: {
-    bookCount: (root) => books.filter((b) => b.author === root.name).length,
+    bookCount: async (root) => {
+      const booksByAuthor = await Book.find({ author: root.name });
+      return booksByAuthor.length;
+    },
   },
 };
 
@@ -196,8 +186,14 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
-}).then(({ url }) => {
-  Book.insertMany(books);
-  Author.insertMany(authors);
+}).then(async ({ url }) => {
+  const bookCount = await Book.countDocuments();
+  const authorCount = await Author.countDocuments();
+
+  if (bookCount === 0 && authorCount === 0) {
+    await Book.insertMany(books);
+    await Author.insertMany(authors);
+    console.log("Database initialized with default books and authors.");
+  }
   console.log(`Server ready at ${url}`);
 });

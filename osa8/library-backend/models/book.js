@@ -16,11 +16,11 @@ const schema = new mongoose.Schema({
     minlength: 4,
     required: true
   },
-  genres: {
-    genre: {
-        type: String
+  genres: [
+    {
+      type: String
     }
-  },
+  ]
 })
 
 module.exports = mongoose.model('Book', schema)
