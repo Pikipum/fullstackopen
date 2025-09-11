@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const Author = require("./models/author");
 const Book = require("./models/book");
+const User = require("./models/user");
 
 require("dotenv").config();
 
@@ -102,6 +103,14 @@ let books = [
 ];
 
 const typeDefs = `
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+  type Token {
+    value: String!
+  }
   type Author {
     name: String!
     bookCount: Int!
@@ -116,6 +125,7 @@ const typeDefs = `
     id: ID!
   }
   type Query {
+    me: User
     authorCount: Int!
     bookCount: Int!
     allBooks(author: String, genre: String): [Book!]!
@@ -132,12 +142,29 @@ const typeDefs = `
       name: String!
       setBornTo: Int!
     ): Author
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `;
 
 const resolvers = {
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      const currentUser = context.currentUser;
+
+      if (!currentUser) {
+        throw new GraphQLError("not authenticated", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
       if (args.author.length < 5) {
         throw new GraphQLError("Author name must be longer than 5 characters");
       }
@@ -145,9 +172,7 @@ const resolvers = {
         throw new GraphQLError("Book title must be longer than 3 characters");
       }
       if (args.published > 2025) {
-        throw new GraphQLError(
-          "Can't add unpublished book"
-        );
+        throw new GraphQLError("Can't add unpublished book");
       }
       const book = new Book({ ...args, id: uuid() });
 
@@ -157,7 +182,16 @@ const resolvers = {
       }
       return book.save();
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      const currentUser = context.currentUser;
+
+      if (!currentUser) {
+        throw new GraphQLError("not authenticated", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
       if (args.setBornTo > 2025) {
         throw new GraphQLError("Author born date must be before 2025");
       }
@@ -169,8 +203,45 @@ const resolvers = {
       author.born = args.setBornTo;
       return author.save();
     },
+    createUser: async (root, args) => {
+      const user = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre,
+      });
+
+      return user.save().catch((error) => {
+        throw new GraphQLError("Creating the user failed", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.username,
+            error,
+          },
+        });
+      });
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== "secret") {
+        throw new GraphQLError("wrong credentials", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+    },
   },
   Query: {
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
@@ -200,6 +271,16 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null;
+    if (auth && auth.startsWith("Bearer ")) {
+      const decodedToken = jwt.verify(auth.substring(7), process.env.SECRET);
+      const currentUser = await User.findById(decodedToken.id).populate(
+        "friends"
+      );
+      return { currentUser };
+    }
+  },
 }).then(async ({ url }) => {
   const bookCount = await Book.countDocuments();
   const authorCount = await Author.countDocuments();
