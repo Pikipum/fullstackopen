@@ -222,7 +222,7 @@ const resolvers = {
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username });
 
-      if (!user || args.password !== "secret") {
+      if (!user || args.password !== "password123") {
         throw new GraphQLError("wrong credentials", {
           extensions: {
             code: "BAD_USER_INPUT",
@@ -235,7 +235,7 @@ const resolvers = {
         id: user._id,
       };
 
-      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+      return { value: jwt.sign(userForToken, process.env.SECRET) };
     },
   },
   Query: {
@@ -284,6 +284,11 @@ startStandaloneServer(server, {
   const authorCount = await Author.countDocuments();
 
   if (bookCount === 0 && authorCount === 0) {
+    const user = new User({
+      username: "JohnUser1337",
+      favoriteGenre: "testing",
+    });
+    await user.save();
     await Book.insertMany(books);
     await Author.insertMany(authors);
     console.log("Database initialized with default books and authors.");
