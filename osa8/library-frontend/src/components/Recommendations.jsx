@@ -3,8 +3,8 @@ import { useMutation, useQuery } from "@apollo/client/react";
 import { ALL_BOOKS } from "../queries";
 
 const Recommendations = ({ show, favoriteGenre }) => {
-  const books = useQuery(ALL_BOOKS);
-
+  const books = useQuery(ALL_BOOKS, { variables: { genre: favoriteGenre } });
+  
   if (!show) {
     return null;
   }
@@ -12,10 +12,6 @@ const Recommendations = ({ show, favoriteGenre }) => {
   if (books.loading) {
     return <div>loading...</div>;
   }
-
-  const filteredBooks = favoriteGenre
-    ? books.data.allBooks.filter((book) => book.genres.includes(favoriteGenre))
-    : books.data.allBooks;
 
   return (
     <div>
@@ -28,7 +24,7 @@ const Recommendations = ({ show, favoriteGenre }) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {filteredBooks.map((a) => (
+          {books.data.allBooks.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author}</td>
