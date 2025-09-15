@@ -14,8 +14,6 @@ const Books = (props) => {
     return <div>loading...</div>;
   }
 
-  console.log(books)
-
   const genres = Array.from(
     new Set(books.data.allBooks.flatMap((book) => book.genres))
   );

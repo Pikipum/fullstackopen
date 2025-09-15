@@ -110,6 +110,7 @@ const typeDefs = `
   }
   type Token {
     value: String!
+    favoriteGenre: String!
   }
   type Author {
     name: String!
@@ -235,7 +236,7 @@ const resolvers = {
         id: user._id,
       };
 
-      return { value: jwt.sign(userForToken, process.env.SECRET) };
+      return { value: jwt.sign(userForToken, process.env.SECRET), favoriteGenre: user.favoriteGenre };
     },
   },
   Query: {
@@ -286,7 +287,7 @@ startStandaloneServer(server, {
   if (bookCount === 0 && authorCount === 0) {
     const user = new User({
       username: "JohnUser1337",
-      favoriteGenre: "testing",
+      favoriteGenre: "refactoring",
     });
     await user.save();
     await Book.insertMany(books);

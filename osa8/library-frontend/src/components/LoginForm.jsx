@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../queries";
 
-const LoginForm = ({ show, setError, setToken }) => {
-  
+const LoginForm = ({ show, setError, setToken, setFavoriteGenre }) => {
   if (!show) {
     return null;
   }
@@ -19,8 +18,12 @@ const LoginForm = ({ show, setError, setToken }) => {
 
   useEffect(() => {
     if (result.data) {
+      console.log(result);
       const token = result.data.login.value;
+      const favoriteGenre = result.data.login.favoriteGenre;
       setToken(token);
+      setFavoriteGenre(favoriteGenre);
+      localStorage.setItem("user-favoriteGenre", favoriteGenre);
       localStorage.setItem("user-token", token);
     }
   }, [result.data]);

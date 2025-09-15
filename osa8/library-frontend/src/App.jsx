@@ -3,11 +3,13 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
+import Recommendations from "./components/Recommendations";
 // import { gql, useQuery } from '@apollo/client/react'
 
 const App = () => {
   const [page, setPage] = useState("authors");
   const [token, setToken] = useState(null);
+  const [favoriteGenre, setFavoriteGenre] = useState("")
 
   if (!token) {
     return (
@@ -22,7 +24,7 @@ const App = () => {
 
         <Books show={page === "books"} />
 
-        <LoginForm show={page === "login"} setToken={setToken} />
+        <LoginForm show={page === "login"} setToken={setToken} setFavoriteGenre={setFavoriteGenre} />
       </div>
     );
   }
@@ -34,6 +36,7 @@ const App = () => {
         <button onClick={() => setPage("books")}>books</button>
         <button onClick={() => setPage("add")}>add book</button>
         <button onClick={() => setToken(null)}>logout</button>
+        <button onClick={() => setPage("recommendations")}>recommendations</button>
       </div>
 
       <Authors show={page === "authors"} token={token} />
@@ -43,6 +46,9 @@ const App = () => {
       <NewBook show={page === "add"} />
 
       <LoginForm show={page === "login"} setToken={setToken} />
+
+      <Recommendations show={page === "recommendations"} favoriteGenre={favoriteGenre} />
+      
     </div>
   );
 };
