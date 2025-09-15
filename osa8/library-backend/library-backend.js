@@ -236,7 +236,10 @@ const resolvers = {
         id: user._id,
       };
 
-      return { value: jwt.sign(userForToken, process.env.SECRET), favoriteGenre: user.favoriteGenre };
+      return {
+        value: jwt.sign(userForToken, process.env.SECRET),
+        favoriteGenre: user.favoriteGenre,
+      };
     },
   },
   Query: {

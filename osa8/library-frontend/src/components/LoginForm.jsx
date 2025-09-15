@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../queries";
 
-const LoginForm = ({ show, setError, setToken, setFavoriteGenre }) => {
+const LoginForm = ({ show, setError, setToken, setFavoriteGenre, setPage }) => {
   if (!show) {
     return null;
   }
@@ -31,7 +31,7 @@ const LoginForm = ({ show, setError, setToken, setFavoriteGenre }) => {
   const submit = async (event) => {
     event.preventDefault();
 
-    login({ variables: { username, password } });
+    await login({ variables: { username, password } });
   };
 
   return (
