@@ -5,7 +5,6 @@ import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 import Recommendations from "./components/Recommendations";
 import { useApolloClient } from "@apollo/client/react";
-// import { gql, useQuery } from '@apollo/client/react'
 
 const App = () => {
   const [page, setPage] = useState("authors");

@@ -4,7 +4,7 @@ import { ALL_BOOKS } from "../queries";
 
 const Recommendations = ({ show, favoriteGenre }) => {
   const books = useQuery(ALL_BOOKS, { variables: { genre: favoriteGenre } });
-  
+
   if (!show) {
     return null;
   }
