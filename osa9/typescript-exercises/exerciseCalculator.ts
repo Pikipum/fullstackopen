@@ -10,7 +10,7 @@ interface Result {
 
 const calculateExercises = (hoursPerDay: number[], target: number): Result => {
   const sum = hoursPerDay.reduce((partialSum, a) => partialSum + a, 0);
-  const trainingDays = hoursPerDay.length;
+  const trainingDays = hoursPerDay.filter(a => a > 0).length;
   const average = sum / trainingDays;
   let success = null;
   let rating = null;
@@ -44,4 +44,19 @@ const calculateExercises = (hoursPerDay: number[], target: number): Result => {
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+const parseInput = (): { target: number; hours: number[] } => {
+  const args = process.argv.slice(2).map(Number);
+  if (args.length < 2 || args.some(isNaN)) {
+    throw new Error("Provide at least one number for target and one for hours");
+  }
+  const target = args[0];
+  const hours = args.slice(1);
+  return { target, hours };
+};
+
+try {
+  const { target, hours } = parseInput();
+  console.log(calculateExercises(hours, target));
+} catch (e) {
+  console.error("Error:", (e as Error).message);
+}

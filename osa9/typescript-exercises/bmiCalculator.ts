@@ -21,4 +21,14 @@ const calculateBmi = (height: number, weight: number): string => {
   }
 };
 
-console.log(calculateBmi(180, 74));
+try {
+  const args = process.argv.slice(2).map(Number);
+  if (!(args.length == 2) || args.some(isNaN)) {
+    throw new Error("Provide two numbers: height followed by weight");
+  }
+  const height = args[0];
+  const weight = args[1];
+  console.log(calculateBmi(height, weight));
+} catch (e) {
+  console.error("Error:", (e as Error).message);
+}
