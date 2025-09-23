@@ -10,7 +10,7 @@ interface Result {
 
 const calculateExercises = (hoursPerDay: number[], target: number): Result => {
   const sum = hoursPerDay.reduce((partialSum, a) => partialSum + a, 0);
-  const trainingDays = hoursPerDay.filter(a => a > 0).length;
+  const trainingDays = hoursPerDay.filter((a) => a > 0).length;
   const average = sum / trainingDays;
   let success = null;
   let rating = null;
