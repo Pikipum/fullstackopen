@@ -1,4 +1,4 @@
-interface Result {
+export interface Result {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -11,7 +11,7 @@ interface Result {
 const calculateExercises = (hoursPerDay: number[], target: number): Result => {
   const sum = hoursPerDay.reduce((partialSum, a) => partialSum + a, 0);
   const trainingDays = hoursPerDay.filter((a) => a > 0).length;
-  const average = sum / trainingDays;
+  const average = sum / hoursPerDay.length;
   let success = null;
   let rating = null;
   let ratingDescription = "";
@@ -54,9 +54,13 @@ const parseInput = (): { target: number; hours: number[] } => {
   return { target, hours };
 };
 
-try {
-  const { target, hours } = parseInput();
-  console.log(calculateExercises(hours, target));
-} catch (e) {
-  console.error("Error:", (e as Error).message);
+if (require.main === module) {
+  try {
+    const { target, hours } = parseInput();
+    console.log(calculateExercises(hours, target));
+  } catch (e) {
+    console.error("Error:", (e as Error).message);
+  }
 }
+
+export default calculateExercises;
