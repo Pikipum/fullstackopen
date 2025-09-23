@@ -24,13 +24,17 @@ const calculateBmi = (height: number, weight: number): string => {
 };
 
 try {
-  const args = process.argv.slice(2).map(Number);
-  if (!(args.length == 2) || args.some(isNaN)) {
-    throw new Error("Provide two numbers: height followed by weight");
+  if (require.main === module) {
+    const args = process.argv.slice(2).map(Number);
+    if (!(args.length == 2) || args.some(isNaN)) {
+      throw new Error("Provide two numbers: height followed by weight");
+    }
+    const height = args[0];
+    const weight = args[1];
+    console.log(calculateBmi(height, weight));
   }
-  const height = args[0];
-  const weight = args[1];
-  console.log(calculateBmi(height, weight));
 } catch (e) {
   console.error("Error:", (e as Error).message);
 }
+
+export default calculateBmi;
