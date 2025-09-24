@@ -1,3 +1,4 @@
 node_modules
 .env
 osa6/query-notes
+dist
