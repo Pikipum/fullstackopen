@@ -6,10 +6,9 @@ const patientRouter = express.Router();
 patientRouter.get("/", (_req, res) => {
   res.send(patientService.getEntries());
 });
-/*
-router.post('/', (_req, res) => {
-  res.send('Saving a diagnosis!');
+patientRouter.post("/", (req, res) => {
+  const requestPatient = req.body;
+  res.send(patientService.addPatient(requestPatient));
 });
-*/
 
 export default patientRouter;
