@@ -1,36 +1,12 @@
-import { Patient, Gender, noSsnPatient } from "../types";
+import { Patient, noSsnPatient, NewPatient } from "../types";
 import { v1 as uuid } from "uuid";
 import patientData from "../../data/patients";
+import { NewPatientSchema } from "../utils";
 
-const isGender = (param: any): param is Gender => {
-  return Object.values(Gender).includes(param);
+export const toNewPatient = (object: unknown): NewPatient => {
+  return NewPatientSchema.parse(object);
 };
 
-const isString = (text: any): text is string => {
-  return typeof text === "string" || text instanceof String;
-};
-
-const toNewPatient = (object: any): Patient => {
-  if (
-    !object ||
-    !isString(object.name) ||
-    !isString(object.dateOfBirth) ||
-    !isString(object.ssn) ||
-    !isString(object.occupation) ||
-    !isGender(object.gender)
-  ) {
-    throw new Error("Incorrect or missing patient data");
-  }
-
-  return {
-    id: uuid(),
-    name: object.name,
-    dateOfBirth: object.dateOfBirth,
-    ssn: object.ssn,
-    gender: object.gender,
-    occupation: object.occupation,
-  };
-};
 const noSsnPatients: noSsnPatient[] = (patientData as Patient[]).map(
   ({ ssn, ...rest }) => rest
 );
@@ -46,7 +22,11 @@ const getNoSsnEntries = (): noSsnPatient[] => {
 };
 
 const addPatient = (object: any): Patient => {
-  const newPatient = toNewPatient(object);
+  const newPatientData = toNewPatient(object);
+  const newPatient: Patient = {
+    ...newPatientData,
+    id: uuid(),
+  };
   patientData.push(newPatient);
   const { ssn, ...noSsn } = newPatient;
   noSsnPatients.push(noSsn);

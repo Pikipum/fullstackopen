@@ -6,7 +6,7 @@ export const NewPatientSchema = z.object({
   name: z.string(),
   occupation: z.string(),
   ssn: z.string(),
-  dateOfBirth: z.iso.date(),
+  dateOfBirth: z.iso.date()
 });
 
 export const toNewPatientEntry = (object: unknown): NewPatient => {
