@@ -2,6 +2,7 @@ import { useState } from "react"
 import diaryService from "../services/diaries"
 import type { Diary, DiaryFormValues } from "../types"
 import type { Visibility, Weather } from "../types"
+import { AxiosError } from "axios"
 
 
 interface Props {
@@ -14,6 +15,7 @@ const AddEntry = ({ diaries, setDiaries }: Props) => {
     const [newDiaryVisibility, setNewDiaryVisibility] = useState('');
     const [newDiaryWeather, setNewDiaryWeather] = useState('');
     const [newDiaryComment, setNewDiaryComment] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const diaryCreation = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -30,12 +32,17 @@ const AddEntry = ({ diaries, setDiaries }: Props) => {
             setDiaries(diaries.concat(diary));
         } catch (e) {
             console.log(e);
+            const error = e as AxiosError;
+            const errorMsg = error.response?.data as string
+            console.log(error)
+            setErrorMessage(errorMsg)
         }
     }
 
     return (
         <div>
             <h2>Add new entry</h2>
+            <b>{errorMessage}</b>
             <form onSubmit={diaryCreation}>
                 <div>
                     date: <input
