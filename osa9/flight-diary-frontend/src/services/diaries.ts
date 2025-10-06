@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Diary } from "../types";
+import type { Diary, DiaryFormValues } from "../types";
 
 import { apiBaseUrl } from "../constants";
 
@@ -9,14 +9,13 @@ const getAll = async (): Promise<Diary[]> => {
   return data;
 };
 
-/*
-const create = async (object: PatientFormValues) => {
-  const { data } = await axios.post<Patient>(`${apiBaseUrl}/patients`, object);
+const create = async (diary: DiaryFormValues) => {
+  const { data } = await axios.post<Diary>(`${apiBaseUrl}/diaries`, diary);
 
   return data;
 };
-*/
 
 export default {
   getAll,
+  create,
 };

@@ -9,3 +9,5 @@ export interface Diary {
   visibility: Visibility;
   comment: string;
 }
+
+export type DiaryFormValues = Omit<Diary, "id" | "entries">;

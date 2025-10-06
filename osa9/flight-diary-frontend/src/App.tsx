@@ -19,7 +19,7 @@ function App() {
 
   return (
     <div>
-      <AddEntry />
+      <AddEntry diaries={diaries} setDiaries={setDiaries} />
       <DiaryEntries diaries={diaries} />
     </div>
   );
