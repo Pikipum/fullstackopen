@@ -7,7 +7,8 @@ import { NewPatient, Patient } from "../types";
 const patientRouter = express.Router();
 
 patientRouter.get("/", (_req, res) => {
-  res.send(patientService.getNoSsnEntries());
+  //res.send(patientService.getNoSsnEntries());
+  res.send(patientService.getEntries());
 });
 patientRouter.get("/:id", (req, res) => {
   const patient = patientService.findPatientById(req.params.id);
