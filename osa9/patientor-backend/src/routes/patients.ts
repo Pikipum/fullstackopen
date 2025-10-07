@@ -9,6 +9,15 @@ const patientRouter = express.Router();
 patientRouter.get("/", (_req, res) => {
   res.send(patientService.getNoSsnEntries());
 });
+patientRouter.get("/:id", (req, res) => {
+  const patient = patientService.findPatientById(req.params.id);
+
+  if (patient) {
+    res.send(patient);
+  } else {
+    res.send(404);
+  }
+});
 
 const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   try {

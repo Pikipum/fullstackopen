@@ -17,6 +17,10 @@ const getEntries = (): Patient[] => {
   return patients;
 };
 
+const findPatientById = (id: string): Patient => {
+  return patients.find((patient) => patient.id === id) as Patient;
+};
+
 const getNoSsnEntries = (): noSsnPatient[] => {
   return noSsnPatients;
 };
@@ -26,6 +30,7 @@ const addPatient = (object: any): Patient => {
   const newPatient: Patient = {
     ...newPatientData,
     id: uuid(),
+    entries: [],
   };
   patientData.push(newPatient);
   const { ssn, ...noSsn } = newPatient;
@@ -37,4 +42,5 @@ export default {
   getEntries,
   getNoSsnEntries,
   addPatient,
+  findPatientById,
 };
