@@ -1,4 +1,4 @@
-import type { Diary } from "../types"
+import type { Diary } from "../types";
 
 interface Props {
     diaries: Diary[]
@@ -22,7 +22,7 @@ const DiaryEntries = ({ diaries }: Props) => {
                 )}
             </ul>
         </div>
-    )
-}
+    );
+};
 
-export default DiaryEntries
+export default DiaryEntries;

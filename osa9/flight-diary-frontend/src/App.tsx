@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
-import type { Diary } from "./types"
-import AddEntry from "./components/AddEntry"
-import DiaryEntries from "./components/DiaryEntries"
-import diaryService from "./services/diaries"
+import { useEffect, useState } from "react";
+import type { Diary } from "./types";
+import AddEntry from "./components/AddEntry";
+import DiaryEntries from "./components/DiaryEntries";
+import diaryService from "./services/diaries";
+import React from "react";
 
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
     const fetchDiaryList = async () => {
       const diaries = await diaryService.getAll();
       setDiaries(diaries);
-    }
+    };
     void fetchDiaryList();
   }, []);
 
@@ -25,4 +26,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

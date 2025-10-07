@@ -1,8 +1,8 @@
-import { useState } from "react"
-import diaryService from "../services/diaries"
-import type { Diary, DiaryFormValues } from "../types"
-import type { Visibility, Weather } from "../types"
-import { AxiosError } from "axios"
+import React, { useState } from "react";
+import diaryService from "../services/diaries";
+import type { Diary, DiaryFormValues } from "../types";
+import type { Visibility, Weather } from "../types";
+import { AxiosError } from "axios";
 
 
 interface Props {
@@ -33,34 +33,56 @@ const AddEntry = ({ diaries, setDiaries }: Props) => {
         } catch (e) {
             console.log(e);
             const error = e as AxiosError;
-            const errorMsg = error.response?.data as string
-            console.log(error)
-            setErrorMessage(errorMsg)
+            const errorMsg = error.response?.data as string;
+            console.log(error);
+            setErrorMessage(errorMsg);
         }
-    }
+    };
+
+    const visibilityValues = ["great", "good", "ok", "poor"];
+    const weatherValues = ["sunny", "rainy", "cloudy", "stormy", "windy"];
 
     return (
         <div>
             <h2>Add new entry</h2>
             <b>{errorMessage}</b>
-            <form onSubmit={diaryCreation}>
+            <form onSubmit={event => { void diaryCreation(event); }}>
                 <div>
                     date: <input
+                        type="date"
+                        id="diary-entry"
+                        name="diary-date"
                         value={newDiaryDate}
                         onChange={(event) => setNewDiaryDate(event.target.value)}
                     />
                 </div>
                 <div>
-                    visibility: <input
-                        value={newDiaryVisibility}
-                        onChange={(event) => setNewDiaryVisibility(event.target.value)}
-                    />
+                    visibility: {visibilityValues.map((value, i) => {
+                        return (
+                            <span>
+                                {value} <input type="radio"
+                                    id={[value, i].join()}
+                                    value={value}
+                                    checked={newDiaryVisibility === value}
+                                    onChange={(event) => setNewDiaryVisibility(event.target.value)}
+                                />
+                            </span>
+                        );
+                    })}
                 </div>
                 <div>
-                    weather: <input
-                        value={newDiaryWeather}
-                        onChange={(event) => setNewDiaryWeather(event.target.value)}
-                    />
+                    weather: {weatherValues.map((value, i) => {
+                        return (
+                            <span>
+                                {value} <input type="radio"
+                                    id={[value, i].join()}
+                                    value={value}
+                                    checked={newDiaryWeather === value}
+                                    onChange={(event) => setNewDiaryWeather(event.target.value)}
+                                />
+                            </span>
+                        );
+                    })}
                 </div>
                 <div>
                     comment: <input
@@ -71,7 +93,7 @@ const AddEntry = ({ diaries, setDiaries }: Props) => {
                 <button type='submit'>add</button>
             </form>
         </div>
-    )
-}
+    );
+};
 
-export default AddEntry
+export default AddEntry;
