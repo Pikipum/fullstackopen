@@ -7,11 +7,11 @@ export const toNewPatient = (object: unknown): NewPatient => {
   return NewPatientSchema.parse(object);
 };
 
-const noSsnPatients: noSsnPatient[] = (patientData as Patient[]).map(
-  ({ ssn, ...rest }) => rest
+const noSsnPatients: noSsnPatient[] = patientData.map(
+  ({ ssn: _ssn, ...rest }) => rest
 );
 
-const patients: Patient[] = patientData as Patient[];
+const patients: Patient[] = patientData;
 
 const getEntries = (): Patient[] => {
   return patients;
@@ -25,7 +25,7 @@ const getNoSsnEntries = (): noSsnPatient[] => {
   return noSsnPatients;
 };
 
-const addPatient = (object: any): Patient => {
+const addPatient = (object: unknown): Patient => {
   const newPatientData = toNewPatient(object);
   const newPatient: Patient = {
     ...newPatientData,
@@ -33,8 +33,7 @@ const addPatient = (object: any): Patient => {
     entries: [],
   };
   patientData.push(newPatient);
-  const { ssn, ...noSsn } = newPatient;
-  noSsnPatients.push(noSsn);
+  noSsnPatients.push((({ ssn: _ssn, ...rest }) => rest)(newPatient));
   return newPatient;
 };
 
