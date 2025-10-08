@@ -2,6 +2,16 @@ import { z } from "zod";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { NewPatientSchema } from "./utils";
 
+interface SickLeave {
+  startDate: string;
+  endDate: string;
+}
+
+interface Discharge {
+  date: string;
+  criteria: string;
+}
+
 interface BaseEntry {
   id: string;
   description: string;
@@ -24,10 +34,13 @@ interface HealthCheckEntry extends BaseEntry {
 
 interface HospitalEntry extends BaseEntry {
   type: "Hospital";
+  discharge: Discharge;
 }
 
 interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
+  employerName: string;
+  sickLeave?: SickLeave;
 }
 
 export type Entry =
