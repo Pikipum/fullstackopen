@@ -1,14 +1,14 @@
-import { Patient } from "../types"
-import { useParams } from "react-router-dom"
+import { Patient } from "../types";
+import { useParams } from "react-router-dom";
 
 interface Props {
     patients: Patient[]
 }
 
 const PatientView = (patients: Props) => {
-    const id = useParams().id
+    const id = useParams().id;
 
-    const patient = patients.patients.find(p => p.id === id)
+    const patient = patients.patients.find(p => p.id === id);
 
     if (!patient) {
         return <div>Patient not found</div>;
@@ -24,7 +24,7 @@ const PatientView = (patients: Props) => {
             </div>
         </div>
 
-    )
-}
+    );
+};
 
 export default PatientView;
